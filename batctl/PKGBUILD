@@ -1,0 +1,28 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='batctl'
+pkgver='2015.1'
+pkgrel=1
+groups=('blackarch' 'blackarch-wireless')
+pkgdesc='B.A.T.M.A.N. advanced control and management tool.'
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+url='http://www.open-mesh.net/'
+depends=('libnl')
+license=('GPL')
+source=("http://downloads.open-mesh.net/batman/releases/batman-adv-$pkgver/batctl-${pkgver}.tar.gz")
+sha1sums=('ae086f334ff912ab2a8116caedf0a2a1816acf1a')
+
+build(){
+  cd "$srcdir/batctl-$pkgver"
+
+  make
+}
+
+package() {
+  cd "$srcdir/batctl-$pkgver"
+
+  install -Dm644 README "$pkgdir/usr/share/doc/batctl/README"
+
+  make DESTDIR="$pkgdir"  PREFIX=/usr SBINDIR=/usr/bin install
+}

@@ -1,0 +1,30 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='bluelog'
+pkgver='1.1.2'
+pkgrel=1
+groups=('blackarch' 'blackarch-bluetooth' 'blackarch-scanner')
+pkgdesc='A Bluetooth scanner and sniffer written to do a single task, log devices that are in discoverable mode.'
+url='http://www.digifail.com/software/bluelog.shtml'
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+license=('GPL2')
+depends=('bluez' 'bluez-libs')
+makedepends=('wget')
+source=("http://dl.packetstormsecurity.net/wireless/bluelog-${pkgver}.tar.gz")
+sha1sums=('04fe6a63fd07838df89db7df2788085d48c996cd')
+
+build () {
+  cd "$srcdir/bluelog-$pkgver"
+
+  make
+}
+
+package() {
+  cd "$srcdir/bluelog-$pkgver"
+
+  make DESTDIR="$pkgdir" install
+
+  install -Dm644 README "$pkgdir/usr/share/doc/bluelog/README"
+  install -Dm644 COPYING "$pkgdir/usr/share/licenses/bluelog/COPYING"
+}

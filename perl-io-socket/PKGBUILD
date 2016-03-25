@@ -1,0 +1,37 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+# Originally from the AUR.
+
+pkgname='perl-io-socket'
+pkgver='1.35_02'
+pkgrel=1
+pkgdesc='Object interface to socket communications'
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+license=('PerlArtistic' 'GPL')
+options=('!emptydirs')
+depends=('perl>=0')
+url='http://search.cpan.org/~gbarr/IO-1.25/lib/IO/Socket.pm'
+source=("http://search.cpan.org/CPAN/authors/id/T/TO/TODDR/IO-${pkgver}.tar.gz")
+sha1sums=('1b72bb30df23dace6638a844a1aae91c1848e208')
+
+build() {
+  cd "$srcdir/IO-$pkgver"
+
+  ( export PERL_MM_USE_DEFAULT=1 PERL5LIB="" PERL_AUTOINSTALL=--skipdeps \
+    PERL_MM_OPT="INSTALLDIRS=vendor DESTDIR='$pkgdir'" \
+    PERL_MB_OPT="--installdirs vendor --destdir '$pkgdir'" \
+    MODULEBUILDRC=/dev/null
+
+    /usr/bin/perl Makefile.PL
+
+    make
+  )
+}
+
+package() {
+  cd "$srcdir/IO-$pkgver"
+
+  make install
+
+  find "$pkgdir" -name .packlist -o -name perllocal.pod -delete
+}

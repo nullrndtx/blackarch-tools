@@ -1,0 +1,29 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='ruby-unf'
+_gemname='unf'
+pkgver='0.1.4'
+pkgrel=2
+pkgdesc='A wrapper library to bring Unicode Normalization Form support to Ruby/JRuby.'
+arch=('any')
+license=('unknown')
+makedepends=('ruby')
+url='https://github.com/knu/ruby-unf'
+source=("http://rubygems.org/downloads/unf-${pkgver}.gem")
+sha1sums=('847ecaefb95c6639920a70e21812fad48c40fe08')
+noextract=("unf-${pkgver}.gem")
+
+package() {
+  cd "$srcdir"
+
+  local _gemdir=$(ruby -e 'puts Gem.default_dir')
+
+  if [[ $CARCH == arm* ]] ; then
+    gem install --no-user-install --ignore-dependencies --no-rdoc --no-ri \
+      -i "$pkgdir$_gemdir" unf-${pkgver}.gem
+  else
+    gem install --no-user-install --ignore-dependencies -i "$pkgdir$_gemdir" \
+      unf-${pkgver}.gem
+  fi
+}

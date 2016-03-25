@@ -1,0 +1,36 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='voiphopper'
+pkgver='2.04'
+pkgrel=7
+groups=('blackarch' 'blackarch-automation' 'blackarch-voip')
+pkgdesc="A security validation tool that tests to see if a PC can mimic the behavior of an IP Phone. It rapidly automates a VLAN Hop into the Voice VLAN."
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+url='http://voiphopper.sourceforge.net/'
+license=('GPL3')
+depends=('libpcap' 'gcc')
+source=("http://downloads.sourceforge.net/sourceforge/voiphopper/voiphopper-${pkgver}.tar.gz")
+sha1sums=('262b3e88e3a58adc351aacaadb0e32eca60a9d61')
+
+build() {
+  cd "$srcdir/voiphopper-$pkgver"
+
+  ./configure --prefix=/usr --mandir=/usr/share/man --libexecdir=/usr/lib
+
+  sed -i "s%<linux/if_ether.h>%<netinet/if_ether.h>%" src/dhcpclient.h
+  sed -i "s%<linux/if_tr.h>%<netinet/if_tr.h>%" src/dhcpclient.h
+
+  make
+}
+
+package() {
+  cd "$srcdir/voiphopper-$pkgver"
+
+  mkdir -p "$pkgdir/usr/share/doc/voiphopper"
+  mkdir -p "$pkgdir/usr/bin"
+
+  install -m644 README BUGS "$pkgdir/usr/share/doc/voiphopper"
+
+  make "DESTDIR=$pkgdir" install
+}

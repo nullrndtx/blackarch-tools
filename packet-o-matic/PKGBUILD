@@ -1,0 +1,35 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='packet-o-matic'
+pkgver='351'
+pkgrel=3
+pkgdesc='A real time packet processor. Reads the packet from an input module, match the packet using rules and connection tracking information and then send it to a target module.'
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+url='http://www.packet-o-matic.org/'
+license=('GPL')
+groups=('blackarch' 'blackarch-networking' 'blackarch-tunnel')
+depends=('libpcap' 'libxml2' 'libnet')
+makedepends=('subversion')
+source=('svn+https://svn.tuxicoman.be/svn/packet-o-matic/trunk')
+sha1sums=('SKIP')
+
+build() {
+  cd "$srcdir/trunk"
+
+  touch config.h.in
+
+  libtoolize --force --copy
+  aclocal
+  automake --add-missing
+  autoconf
+
+  ./configure --prefix=/usr
+  make
+}
+
+package() {
+  cd "$srcdir/trunk"
+
+  make DESTDIR="$pkgdir/" install
+}

@@ -1,0 +1,21 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='cirt-fuzzer'
+pkgver='1.0'
+pkgrel=1
+pkgdesc='A simple TCP/UDP protocol fuzzer.'
+url='http://www.cirt.dk/'
+groups=('blackarch' 'blackarch-fuzzer')
+license=('GPL')
+arch=('any')
+depends=('perl' 'perl-algorithm-generatesequence')
+source=('http://packetstorm.sigterm.no/fuzzer/fuzzer-cirt.tgz')
+sha1sums=('a4f872b96bebd4a45a0b54b31941b0be7acb99ca')
+
+package() {
+  cd "$srcdir"
+
+  install -D -m755 "fuzzer.txt" "$pkgdir/usr/bin/cirt-fuzzer"
+  install -D -m644 "template.txt" "$pkgdir/usr/share/cirt-fuzzer/template.txt"
+}

@@ -1,0 +1,47 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='sslsniff'
+pkgver='0.8'
+pkgrel=6
+groups=('blackarch' 'blackarch-sniffer')
+pkgdesc="A tool to MITM all SSL connections on a LAN and dynamically generate certs for the domains that are being accessed on the fly"
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+url='http://www.thoughtcrime.org/software/sslsniff/'
+license=('custom')
+depends=('boost' 'log4cpp' 'dsniff')
+source=("http://www.thoughtcrime.org/software/sslsniff/sslsniff-${pkgver}.tar.gz"
+        "boost-1.47.patch"
+        "gcc-4.7-link-fix.patch")
+sha1sums=('1b8142fe9c4f885425e544f59c1e6fe3b23e8d7d'
+          '6c231034e4f21bd005eff5c270755e0060dd7c04'
+          '4495f6785206a23ecfbca08934a9c693b88bda5d')
+
+build()
+{
+  cd sslsniff-$pkgver
+
+  # Boost 1.47 patch
+  patch -p0 < "${srcdir}"/boost-1.47.patch
+  # Fix linking with libraries in gcc 4.7.x
+  patch -p1 < "${srcdir}"/gcc-4.7-link-fix.patch
+
+  ./configure --prefix=/usr --disable-dependency-tracking
+  make
+}
+
+package()
+{
+  cd sslsniff-$pkgver
+  make install DESTDIR="${pkgdir}"
+
+  # Package some example material.
+  mkdir -p "${pkgdir}"/usr/share/sslsniff/{updates,certs}
+  install -m644 leafcert.pem IPSCACLASEA1.crt "${pkgdir}"/usr/share/sslsniff
+  install -m644 updates/*xml "${pkgdir}"/usr/share/sslsniff/updates
+  install -m644 certs/* "${pkgdir}"/usr/share/sslsniff/certs
+  install -Dm644 README "${pkgdir}"/usr/share/doc/sslsniff/README
+
+  # Install license.
+  install -Dm644 COPYING "${pkgdir}"/usr/share/licenses/sslsniff/LICENSE
+}

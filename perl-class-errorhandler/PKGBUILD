@@ -1,0 +1,38 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='perl-class-errorhandler'
+pkgver='0.04'
+pkgrel=1
+pkgdesc='Base class for error handling.'
+arch=('any')
+license=('PerlArtistic' 'GPL')
+options=('!emptydirs')
+depends=('perl')
+url='http://search.cpan.org/dist/Class-ErrorHandler'
+source=("http://search.cpan.org/CPAN/authors/id/T/TO/TOKUHIROM/Class-ErrorHandler-${pkgver}.tar.gz")
+sha1sums=('04c31f206c2eee369ed54ff61b5a3ba086018714')
+
+build() {
+  cd "$srcdir/Class-ErrorHandler-$pkgver"
+
+  ( export PERL_MM_USE_DEFAULT=1 PERL5LIB=""                 \
+      PERL_AUTOINSTALL=--skipdeps                            \
+      PERL_MM_OPT="INSTALLDIRS=vendor DESTDIR='$pkgdir'"     \
+      PERL_MB_OPT="--installdirs vendor --destdir '$pkgdir'" \
+      MODULEBUILDRC=/dev/null
+
+  /usr/bin/perl Makefile.PL
+
+  make
+
+  )
+}
+
+package() {
+  cd "$srcdir/Class-ErrorHandler-$pkgver"
+
+  make install
+
+  find "$pkgdir" -name .packlist -o -name perllocal.pod -delete
+}

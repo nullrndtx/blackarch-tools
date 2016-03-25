@@ -1,0 +1,35 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='r2-bindings'
+pkgver='0.9.9'
+pkgrel=2
+pkgdesc='Language bindings of the radare2 api for valabind and friends.'
+url='http://radare.org'
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+depends=('radare2' 'python2' 'ruby' 'lua' 'ruby1.8' 'ruby1.9' 'gawk'
+         'java-environment' 'vala')
+makedepends=('valabind' 'swig' 'vala' 'gnuradio-fcdproplus')
+license=('GPL3')
+source=("https://github.com/radare/radare2-bindings/archive/${pkgver}.tar.gz")
+sha1sums=('e34151b6f50608eb8fadba22d81625614aafd7a9')
+
+build() {
+  cd "$srcdir/radare2-bindings-$pkgver"
+
+  ./configure --prefix=/usr \
+    --enable=ctypes,cxx,duktape,guile,lua,php5,python,valac,newlisp,dlang,\
+    r2pipe,vapi
+
+  make
+}
+
+package() {
+  cd "$srcdir/radare2-bindings-$pkgver"
+
+  make DESTDIR="$pkgdir" install
+
+  cd r2pipe/python
+
+  python2 setup.py install --prefix=/usr "--root=$pkgdir"
+}

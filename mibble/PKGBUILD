@@ -1,0 +1,47 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='mibble'
+pkgver='2.9.3'
+pkgrel=5
+pkgdesc='Mibble is an open-source SNMP MIB parser (or SMI parser) written in Java. It can be used to read SNMP MIB files as well as simple ASN.1 files.'
+url='http://www.mibble.org/'
+groups=('blackarch' 'blackarch-misc')
+license=('GPL')
+depends=('java-environment' 'bash')
+arch=('any')
+source=("http://www.mibble.org/download/stable/$pkgver/mibble-${pkgver}.tar.gz")
+sha1sums=('33d4c8c0d23992790b94cb061556004cd5d00197')
+
+package() {
+  cd "$srcdir/mibble-$pkgver"
+
+  mkdir -p "$pkgdir/usr/bin"
+  mkdir -p "$pkgdir/usr/share/doc/mibble"
+  mkdir -p "$pkgdir/usr/share/mibble"
+
+  install -m755 bin/*.sh "$pkgdir/usr/share/mibble"
+  install -m644 lib/* "$pkgdir/usr/share/mibble"
+  cp -r doc/* "$pkgdir/usr/share/doc/mibble"
+  install -Dm644 README.txt "$pkgdir/usr/share/doc/mibble"
+
+  cat > $pkgdir/usr/bin/MibbleBrowser << EOF
+#!/bin/sh
+cd /usr/share/mibble/bin/
+exec ./MibbleBrowser.sh "\$@"
+EOF
+
+  cat > $pkgdir/usr/bin/MibblePrinter << EOF
+#!/bin/sh
+cd /usr/share/mibble/bin/
+exec ./MibblePrinter.sh "\$@"
+EOF
+
+  cat > $pkgdir/usr/bin/MibbleValidator << EOF
+#!/bin/sh
+cd /usr/share/mibble/bin/
+exec ./MibbleValidator.sh "\$@"
+EOF
+
+  chmod 0755 $pkgdir/usr/bin/Mibble{Browser,Printer,Validator}
+}

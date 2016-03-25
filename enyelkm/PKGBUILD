@@ -1,0 +1,21 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='enyelkm'
+pkgver='1.2'
+pkgrel=1
+pkgdesc='Rootkit for Linux x86 kernels v2.6.'
+url='http://www.enye-sec.org/programas.html'
+groups=('blackarch' 'blackarch-backdoor')
+license=('GPL')
+arch=('any')
+source=("http://www.enye-sec.org/programas/enyelkm-${pkgver}.tar.gz")
+sha1sums=('ed879dff9d5f86810c53fc424f3c5140675125a3')
+
+package() {
+  cd "$srcdir/"
+
+  mkdir -p "$pkgdir/usr/share"
+
+  cp -r enyelkm-$pkgver "$pkgdir/usr/share/"
+}

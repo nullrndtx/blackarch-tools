@@ -1,0 +1,38 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='scanmem'
+pkgver='0.15.3'
+pkgrel=1
+groups=('blackarch' 'blackarch-reversing')
+pkgdesc='A utility used to locate the address of a variable in an executing process.'
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+url='http://code.google.com/p/scanmem/'
+license=('GPL3')
+depends=('python2' 'pygtk')
+makedepends=('intltool')
+optdepends=('gksu: for the GameConqueror GUI.')
+source=("https://github.com/scanmem/scanmem/archive/v${pkgver}.tar.gz")
+sha1sums=('a23bd4894aaafcdf70632477d3379eac5db6680c')
+
+build() {
+  cd "$srcdir/scanmem-$pkgver"
+
+  ./autogen.sh
+
+  ./configure --enable-gui --prefix=/usr
+
+  make
+}
+
+package() {
+  cd "$srcdir/scanmem-$pkgver"
+
+  make -s DESTDIR="$pkgdir" install
+
+  # Fix Python shebang lines.
+  sed 's|python|python2|g' -i "$pkgdir/usr/bin/gameconqueror"
+  sed 's|#!/usr/bin/env python|#!/usr/bin/env python2|g' -i \
+      "$pkgdir/usr/share/gameconqueror/"{backend.py,GameConqueror.py,hexview.py}
+}
+

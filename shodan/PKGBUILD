@@ -1,0 +1,29 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='shodan'
+pkgver='1.4.2'
+pkgrel=1
+pkgdesc='Python library for Shodan (https://developer.shodan.io).'
+url='http://github.com/achillean/shodan-python'
+groups=('blackarch' 'blackarch-automation')
+depends=('python2' 'python2-requests' 'python2-simplejson' 'python2-click')
+makedepends=('python2-setuptools')
+license=('MIT')
+arch=('any')
+source=("https://pypi.python.org/packages/source/s/shodan/shodan-${pkgver}.tar.gz")
+sha1sums=('c90efa29e424119ab7799044717d11473ff49396')
+
+build() {
+  cd "$srcdir/shodan-$pkgver"
+
+  python2 setup.py build
+}
+
+package() {
+  cd "$srcdir/shodan-$pkgver"
+
+  python2 setup.py install --root="$pkgdir" --optimize=1
+
+  install -Dm0644 LICENSE "$pkgdir/usr/share/licenses/python-shodan/LICENSE"
+}

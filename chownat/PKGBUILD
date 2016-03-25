@@ -1,0 +1,19 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='chownat'
+pkgver='0.08b'
+pkgrel=4
+groups=('blackarch' 'blackarch-tunnel')
+pkgdesc="Allows two peers behind two separate NATs with no port forwarding and no DMZ setup on their routers to directly communicate with each other"
+arch=('any')
+url='http://samy.pl/chownat/'
+license=('Unknown')
+source=("chownat-${pkgver}.pl::http://samy.pl/chownat/chownat.pl-v0.08b")
+depends=('perl' 'perl-digest-md4')
+sha1sums=('d6d8072db99ea980ec08b63e82f226fdddd582eb')
+
+package() {
+  cd "$srcdir"
+  install -Dm755 *.pl "$pkgdir/usr/bin/chownat"
+}

@@ -1,0 +1,55 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='veil'
+pkgver=513.e345b01
+pkgrel=1
+epoch=2
+groups=('blackarch' 'blackarch-automation' 'blackarch-exploitation')
+pkgdesc='A tool designed to generate metasploit payloads that bypass common anti-virus solutions.'
+url='https://github.com/veil-evasion/Veil'
+arch=('any')
+license=('GPL2')
+depends=('python2' 'python2-crypto')
+makedepends=('git')
+source=('git+https://github.com/veil-evasion/Veil.git')
+sha1sums=('SKIP')
+
+pkgver() {
+  cd "$srcdir/Veil"
+
+  echo $(git rev-list --count HEAD).$(git rev-parse --short HEAD)
+}
+
+prepare() {
+  cd "$srcdir/Veil"
+
+  grep -iRl 'python' "$srcdir/Veil" |
+    xargs sed -i -e 's|#!.*/usr/bin/python|#!/usr/bin/python2|' \
+                 -e 's|#!.*/usr/bin/env python$|#!/usr/bin/env python2|'
+
+  sed -i 's|python update.py|python2 update.py|' "$srcdir/Veil/setup/setup.sh"
+}
+
+package() {
+  cd "$srcdir/Veil"
+
+  mkdir -p "$pkgdir/usr/bin/"
+  mkdir -p "$pkgdir/usr/share/veil"
+
+  install -Dm644 README.md "$pkgdir/usr/share/doc/veil/README.md"
+  install -m644 CHANGELOG "$pkgdir/usr/share/doc/veil/CHANGELOG"
+  install -Dm644 COPYRIGHT "$pkgdir/usr/share/licenses/veil/COPYRIGHT"
+
+  rm CHANGELOG COPYRIGHT README.md
+
+  cp -a * "$pkgdir/usr/share/veil"
+
+  cat > "$pkgdir/usr/bin/veil" << EOF
+#!/bin/sh
+cd /usr/share/veil/
+exec python2 Veil-Evasion.py "\$@"
+EOF
+
+  chmod +x "$pkgdir/usr/bin/veil"
+}

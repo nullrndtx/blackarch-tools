@@ -1,0 +1,28 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='tsh-sctp'
+pkgver=2.850a2da
+pkgrel=2
+pkgdesc='An open-source UNIX backdoor.'
+url='https://github.com/infodox/tsh-sctp'
+arch=('any')
+groups=('blackarch' 'blackarch-backdoor')
+license=('GPL')
+makedepends=('git')
+source=('git+https://github.com/infodox/tsh-sctp.git')
+sha1sums=('SKIP')
+
+pkgver() {
+  cd "$srcdir/tsh-sctp"
+
+  echo $(git rev-list --count HEAD).$(git rev-parse --short HEAD)
+}
+
+package() {
+  cd "$srcdir/tsh-sctp"
+
+  mkdir -p "$pkgdir/usr/share/tsh-sctp"
+
+  cp -a --no-preserve=ownership * "$pkgdir/usr/share/tsh-sctp"
+}

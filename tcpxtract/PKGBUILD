@@ -1,0 +1,37 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='tcpxtract'
+pkgver='1.0.1'
+pkgrel=5
+pkgdesc='A tool for extracting files from network traffic.'
+url='http://tcpxtract.sourceforge.net'
+depends=('libpcap' 'flex')
+license=('GPL')
+groups=('blackarch' 'blackarch-misc')
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+source=("http://downloads.sourceforge.net/tcpxtract/tcpxtract-${pkgver}.tar.gz"
+        'conf_default_path.patch')
+sha1sums=('48fce86ac87e5467cb671236a7247474f69bac9d'
+          'a1a389958b731a583afba1b1819a7757046fb456')
+
+prepare(){
+  cd "$srcdir/tcpxtract-$pkgver"
+
+  # Applying conf_default_path patch
+  patch -Np0 -i "$srcdir/conf_default_path.patch"
+}
+
+build() {
+  cd "$srcdir/tcpxtract-$pkgver"
+
+  ./configure --prefix=/usr --sysconfdir=/etc
+
+  make
+}
+
+package() {
+  cd "$srcdir/tcpxtract-$pkgver"
+
+  make DESTDIR="$pkgdir" install
+}

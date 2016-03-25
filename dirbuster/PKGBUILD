@@ -1,0 +1,30 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='dirbuster'
+pkgver='1.0_RC1'
+pkgrel=9
+groups=('blackarch' 'blackarch-scanner' 'blackarch-webapp')
+pkgdesc="An application designed to brute force directories and files names on web/application servers"
+url='http://www.owasp.org/index.php/Category:OWASP_DirBuster_Project'
+license=('LGPL')
+arch=('any')
+depends=('java-environment')
+source=("http://downloads.sourceforge.net/dirbuster/DirBuster-${pkgver/_/-}.tar.bz2")
+sha1sums=('aa0807e42ee9794c31398e77cb473d00eaa33f56')
+
+package() {
+  cd "$srcdir"
+
+  mkdir -p "$pkgdir/usr/share/dirbuster"
+  mkdir -p "$pkgdir/usr/bin"
+
+  cp --no-preserve=ownership -a DirBuster-${pkgver/_/-}/* \
+    "$pkgdir/usr/share/dirbuster"
+
+  cat > "$pkgdir/usr/bin/dirbuster" <<EOF
+#!/bin/sh
+exec java -jar /usr/share/dirbuster/DirBuster-${pkgver/_/-}.jar "\$@"
+EOF
+  chmod +x "$pkgdir/usr/bin/dirbuster"
+}

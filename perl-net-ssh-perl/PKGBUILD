@@ -1,0 +1,43 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='perl-net-ssh-perl'
+pkgver='1.42'
+pkgrel=1
+pkgdesc='Perl client interface to SSH.'
+arch=('any')
+license=('GPL' 'custom')
+options=('!emptydirs')
+depends=('perl-convert-pem>=0.05' 'perl-crypt-dh>=0.01' 'perl-crypt-dsa>=0.11'
+         'perl-crypt-idea' 'perl-crypt-rsa>=1.37'
+         'perl-digest-bubblebabble>=0.01' 'perl-digest-hmac'
+         'perl-digest-sha1>=2.10' 'perl-math-gmp>=1.04'
+         'perl-string-crc32>=1.2')
+url='http://search.cpan.org/dist/Net-SSH-Perl'
+source=("http://search.cpan.org/CPAN/authors/id/S/SC/SCHWIGON/Net-SSH-Perl-${pkgver}.tar.gz")
+sha1sums=('3aa6c110e06be7c2b6da3881fe8ad7b60459c9e2')
+
+build() {
+  cd "$srcdir"
+
+  ( export PERL_MM_USE_DEFAULT=1 PERL5LIB=""                 \
+      PERL_AUTOINSTALL=--skipdeps                            \
+      PERL_MM_OPT="INSTALLDIRS=vendor DESTDIR='$pkgdir'"     \
+      PERL_MB_OPT="--installdirs vendor --destdir '$pkgdir'" \
+      MODULEBUILDRC=/dev/null
+
+    cd "$srcdir/Net-SSH-Perl-$pkgver"
+
+    /usr/bin/perl Makefile.PL
+
+    make
+  )
+}
+
+package() {
+  cd "$srcdir/Net-SSH-Perl-$pkgver"
+
+  make install
+
+  find "$pkgdir" -name .packlist -o -name perllocal.pod -delete
+}

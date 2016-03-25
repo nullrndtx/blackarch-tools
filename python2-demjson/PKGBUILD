@@ -1,0 +1,20 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='python2-demjson'
+pkgver='2.2.3'
+pkgrel=1
+pkgdesc='Encoder, decoder, and lint/validator for JSON (JavaScript Object Notation) compliant with RFC 4627.'
+arch=('any')
+url='http://deron.meranda.us/python/demjson/'
+license=('LGPL')
+depends=('python2')
+makedepends=('python2-distribute')
+sha1sums=('bc948ce6087f0bbb574c3ca66bb150edf55f74f9')
+source=("http://deron.meranda.us/python/demjson/dist/demjson-${pkgver}.tar.gz")
+
+package() {
+  cd "$srcdir/demjson-$pkgver"
+
+  python2 setup.py install --root="$pkgdir" --prefix=/usr
+}

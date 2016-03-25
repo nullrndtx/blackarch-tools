@@ -1,0 +1,27 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='braa'
+pkgver='0.82'
+pkgrel=5
+groups=('blackarch' 'blackarch-scanner')
+pkgdesc="A mass snmp scanner"
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+url='http://s-tech.elsat.net.pl/braa/'
+license=('GPL')
+depends=('glibc')
+makedepends=('subversion' 'nasm')
+provides=('nbtool' 'dnscat')
+source=("http://s-tech.elsat.net.pl/braa/braa-$pkgver.tar.gz")
+sha1sums=('5b8ca4f248d04333663a81d25a54a1c9f2bb3fb6')
+
+build() {
+  cd "$srcdir/braa-$pkgver"
+  make CFLAGS="$CFLAGS"
+}
+
+package() {
+  cd "$srcdir/braa-$pkgver"
+  install -Dm755 braa $pkgdir/usr/bin/braa
+  install -Dm644 README $pkgdir/usr/share/doc/braa/README
+}

@@ -1,0 +1,32 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='blueprint'
+pkgver='0.1_3'
+pkgrel=2
+pkgdesc='A perl tool to identify Bluetooth devices.'
+url='http://trifinite.org/trifinite_stuff_blueprinting.html'
+groups=('blackarch' 'blackarch-bluetooth')
+license=('GPL')
+depends=('perl')
+arch=('any')
+source=("http://trifinite.org/Downloads/bp_v01-3.zip")
+sha1sums=('f013d3ff53c68ac305270608900d0bf22698965d')
+
+package() {
+  cd "$srcdir/bp"
+
+  mkdir -p "$pkgdir/usr/bin"
+  mkdir -p "$pkgdir/usr/share/blueprint"
+
+  cp -r * "$pkgdir/usr/share/blueprint/"
+  chmod -R a+rX "$pkgdir"
+
+  cat > "$pkgdir/usr/bin/blueprint" <<EOF
+#!/bin/sh
+cd /usr/share/blueprint/
+exec perl bp.pl \$*
+EOF
+
+  chmod 755 "$pkgdir/usr/bin/blueprint"
+}

@@ -1,0 +1,27 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='easyfuzzer'
+pkgver='3.6'
+pkgrel=1
+groups=('blackarch' 'blackarch-fuzzer' 'blackarch-webapp')
+pkgdesc='A flexible fuzzer, not only for web, has a CSV output for efficient output analysis (platform independant).'
+arch=('any')
+url='http://www.mh-sec.de/downloads.html.en'
+license=('custom:unknown')
+depends=('perl' 'perl-io-socket-ip')
+source=("http://www.mh-sec.de/downloads/easyfuzzer-${pkgver}.tar.gz")
+sha1sums=('dbb27f21b5b2e3051b012aaad57e9cb4bc331e7b')
+
+package() {
+  cd "$srcdir/easyfuzzer"
+
+  for f in *.pl
+  do
+    install -D -m755 "$f" "$pkgdir/usr/bin/${f%.*}"
+  done
+
+  install -Dm644 header.txt "$pkgdir/usr/share/easyfuzzer/header.txt"
+  install -Dm644 README.easyfuzzer \
+    "$pkgdir/usr/share/doc/easyfuzzer/README.easyfuzzer"
+}

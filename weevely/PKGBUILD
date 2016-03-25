@@ -1,0 +1,51 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='weevely'
+pkgver=669.58919d8
+pkgrel=1
+groups=('blackarch' 'blackarch-backdoor' 'blackarch-webapp')
+pkgdesc='Weaponized web shell.'
+arch=('any')
+url='http://epinna.github.io/Weevely/'
+license=('GPL3')
+depends=('python2' 'python2-yaml' 'python2-prettytable' 'python2-mako'
+         'python2-dateutil' 'python2-socks')
+makedepends=('git')
+source=('git+https://github.com/epinna/weevely3.git')
+sha1sums=('SKIP')
+
+pkgver() {
+  cd "$srcdir/weevely3"
+
+  echo $(git rev-list --count HEAD).$(git rev-parse --short HEAD)
+}
+
+prepare() {
+  cd "$srcdir/weevely3"
+
+  sed -i 's|env python$|env python2|' *.py
+}
+
+package() {
+  cd "$srcdir/weevely3"
+
+  mkdir -p "$pkgdir/usr/bin"
+  mkdir -p "$pkgdir/usr/share/weevely"
+
+  install -Dm644 -t "$pkgdir/usr/share/doc/weevely" README.md CHANGELOG.md \
+    requirements.txt
+  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/weevely/LICENSE"
+
+  rm README.md CHANGELOG.md requirements.txt LICENSE
+
+  cp -a * "$pkgdir/usr/share/weevely"
+
+  cat > "$pkgdir/usr/bin/weevely" << EOF
+#!/bin/sh
+cd /usr/share/weevely
+exec python2 weevely.py "\$@"
+EOF
+
+  chmod a+x "$pkgdir/usr/bin/weevely"
+}

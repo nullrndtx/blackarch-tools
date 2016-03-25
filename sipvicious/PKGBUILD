@@ -1,0 +1,31 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='sipvicious'
+pkgver='0.2.8'
+pkgrel=6
+groups=('blackarch' 'blackarch-automation' 'blackarch-exploitation')
+pkgdesc="Tools for auditing SIP devices"
+arch=('any')
+url='http://blog.sipvicious.org'
+license=('GPL2')
+depends=('python2')
+source=("http://sipvicious.googlecode.com/files/sipvicious-${pkgver}.tar.gz")
+conflicts=('sipvicious-svn')
+sha1sums=('a243ee01a23d7a6305d170213f2a8675820a0df6')
+
+package() {
+  cd ${srcdir}/sipvicious-${pkgver}
+
+  chmod 755 *.py
+  sed -i "s:/usr/bin/env python:/usr/bin/env python2:" *.py
+
+  mkdir -p "${pkgdir}/usr/bin"
+  mkdir -p "${pkgdir}/usr/share"
+
+  for _prog in svmap.py svwar.py svcrack.py svreport.py svcrash.py ; do
+    ln -s "../share/sipvicious/$_prog" "$pkgdir/usr/bin/${_prog%%.*}"
+  done
+
+  mv ${srcdir}/sipvicious-${pkgver} ${pkgdir}/usr/share/sipvicious
+}

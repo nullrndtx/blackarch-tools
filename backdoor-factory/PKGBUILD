@@ -1,0 +1,41 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='backdoor-factory'
+pkgver=166.eacacb6
+pkgrel=1
+groups=('blackarch' 'blackarch-backdoor' 'blackarch-binary')
+pkgdesc='Patch win32/64 binaries with shellcode.'
+url='https://github.com/secretsquirrel/the-backdoor-factory'
+arch=('any')
+license=('GPL3')
+depends=('python2' 'python2-pefile' 'python2-capstone')
+makedepends=('git')
+source=('git+https://github.com/secretsquirrel/the-backdoor-factory.git')
+sha1sums=('SKIP')
+
+pkgver() {
+  cd "$srcdir/the-backdoor-factory"
+
+  echo $(git rev-list --count HEAD).$(git rev-parse --short HEAD)
+}
+
+package() {
+  cd "$srcdir/the-backdoor-factory"
+
+  mkdir -p "$pkgdir/usr/share/backdoor-factory"
+  mkdir -p "$pkgdir/usr/bin/"
+
+  install -Dm644 README.md "$pkgdir/usr/share/doc/backdoor-factory/README.md"
+
+  rm README.md
+
+  cp -a * "$pkgdir/usr/share/backdoor-factory"
+
+  cat > "$pkgdir/usr/bin/backdoor-factory" << EOF
+#!/bin/sh
+exec python2 /usr/share/backdoor-factory/backdoor.py "\$@"
+EOF
+
+  chmod +x "$pkgdir/usr/bin/backdoor-factory"
+}

@@ -1,0 +1,34 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='nomorexor'
+pkgver='0.1'
+pkgrel=4
+groups=('blackarch' 'blackarch-crypto')
+pkgdesc="Tool to help guess a files 256 byte XOR key by using frequency analysis"
+arch=('any')
+url="https://github.com/hiddenillusion/NoMoreXOR"
+license=('custom:unknown')
+replaces=('nommorexor')
+#depends=('python2' 'python2-yara')
+source=("https://github.com/hiddenillusion/NoMoreXOR/archive/master.zip")
+sha1sums=('a962e453d4f621eebc0b3eeb732530262b172d55')
+
+prepare(){
+  cd "$srcdir/NoMoreXOR-master/"
+  sed -i 's|env python|env python2|' NoMoreXOR.py
+  chmod +x NoMoreXOR.py
+}
+
+package() {
+  cd "$srcdir/NoMoreXOR-master"
+
+  mkdir -p "$pkgdir/usr/bin/"
+  mkdir -p "$pkgdir/usr/share/nomorexor"
+  mkdir -p "$pkgdir/usr/share/doc/nomorexor"
+
+  cp --no-preserve=ownership NoMoreXOR.py "$pkgdir/usr/share/nomorexor"
+  cp --no-preserve=ownership Readme.md "$pkgdir/usr/share/doc/nomorexor"
+
+  ln -s "/usr/share/nomorexor/NoMoreXOR.py" "$pkgdir/usr/bin/nomorexor"
+}

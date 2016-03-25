@@ -1,0 +1,27 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='liburcu'
+pkgver='0.9.1'
+pkgrel=1
+pkgdesc='A userspace RCU (read-copy-update) library.'
+arch=('i686' 'x86_64')
+url='http://lttng.org/urcu/'
+license=('LGPL2.1')
+source=("http://lttng.org/files/urcu/userspace-rcu-${pkgver}.tar.bz2")
+options=('!libtool')
+sha1sums=('ca1b603655c3c5bf5d5b6254117999e3ae5f6751')
+
+build() {
+  cd "$srcdir/userspace-rcu-$pkgver"
+
+  ./configure --prefix=/usr
+
+  make
+}
+
+package() {
+  cd "$srcdir/userspace-rcu-$pkgver"
+
+  make install DESTDIR="$pkgdir"
+}

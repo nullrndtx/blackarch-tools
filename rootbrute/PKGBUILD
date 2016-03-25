@@ -1,0 +1,27 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='rootbrute'
+pkgver='0.1'
+pkgrel=3
+epoch=1
+pkgdesc='Local root account bruteforcer.'
+arch=('any')
+url='http://www.packetstormsecurity.org/'
+license=('custom:unknown')
+depends=('python2' 'python2-pexpect')
+groups=('blackarch' 'blackarch-cracker')
+source=('http://packetstorm.sigterm.no/Crackers/rootbrute.py.txt')
+sha1sums=('4b3f56cf7a7b0154e0a24e00ccd5c5f5c69afada')
+
+prepare() {
+  cd "$srcdir"
+
+  sed -i 's|/usr/bin/python$|/usr/bin/env python2|' rootbrute.py.txt
+}
+
+package() {
+  cd "$srcdir"
+
+  install -Dm755 "rootbrute.py.txt" "$pkgdir/usr/bin/rootbrute"
+}

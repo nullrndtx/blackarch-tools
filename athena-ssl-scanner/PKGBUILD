@@ -1,0 +1,38 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='athena-ssl-scanner'
+pkgver='0.6.2'
+pkgrel=2
+groups=('blackarch' 'blackarch-scanner' 'blackarch-crypto')
+pkgdesc='a SSL cipher scanner that checks all cipher codes. It can identify about 150 different ciphers.'
+arch=('any')
+url='http://packetstormsecurity.com/files/93062/Athena-SSL-Cipher-Scanner.html'
+license=('GPL3')
+depends=('java-environment')
+source=("http://packetstorm.sigterm.no/UNIX/scanners/athena-ssl-cipher-check_v${pkgver//./}.tar.gz")
+sha1sums=('e59da768cf9f2b1ebacc829510099c22ee6de9f2')
+
+package() {
+  cd "$srcdir/athena-ssl-cipher-check_v${pkgver//./}"
+
+  mkdir -p "$pkgdir/usr/bin"
+  mkdir -p "$pkgdir/usr/share/athena-ssl-scanner"
+
+  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/athena-ssl-scanner/LICENSE"
+
+  rm LICENSE
+
+  mv athena-ssl-cipher-check_v${pkgver//./}.jar athena-ssl-cipher-check.jar
+
+  cp -a * "$pkgdir/usr/share/athena-ssl-scanner"
+
+  find "$pkgdir" -type f -exec chmod 644 {} +
+
+  cat > "$pkgdir/usr/bin/athena-ssl-scanner" << EOF
+#!/bin/sh
+exec java -jar /usr/share/athena-ssl-scanner/athena-ssl-cipher-check.jar
+EOF
+
+  chmod +x "$pkgdir/usr/bin/athena-ssl-scanner"
+}

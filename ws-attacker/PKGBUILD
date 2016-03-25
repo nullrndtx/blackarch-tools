@@ -1,0 +1,32 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='ws-attacker'
+pkgver='1.7'
+pkgrel=2
+groups=('blackarch' 'blackarch-webapp')
+pkgdesc='A modular framework for web services penetration testing.'
+arch=('any')
+url='http://ws-attacker.sourceforge.net/'
+license=('custom')
+depends=('java-environment')
+makedepends=('unzip')
+source=("http://downloads.sourceforge.net/project/ws-attacker/WS-Attacker%20${pkgver}/WS-Attacker-${pkgver}.zip")
+sha1sums=('ff83250fba39bdfd43cbdb289442fb0db7582fc8')
+
+package() {
+  cd "$srcdir/WS-Attacker-$pkgver"
+
+  mkdir -p "$pkgdir/usr/bin/"
+  mkdir -p "$pkgdir/usr/share/ws-attacker/"
+
+  cp -a * "$pkgdir/usr/share/ws-attacker"
+
+  cat > "$pkgdir/usr/bin/ws-attacker" << EOF
+#!/bin/sh
+cd /usr/share/ws-attacker/
+exec java -jar WS-Attacker-1.7.jar "\$@"
+EOF
+
+  chmod +x "$pkgdir/usr/bin/ws-attacker"
+}

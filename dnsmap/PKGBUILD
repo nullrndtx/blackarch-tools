@@ -1,0 +1,29 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='dnsmap'
+pkgver='0.30'
+pkgrel=4
+groups=('blackarch' 'blackarch-fingerprint')
+pkgdesc='Passive DNS network mapper.'
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+url='http://dnsmap.googlecode.com'
+license=('GPL')
+makedepends=('make')
+install=dnsmap.install
+source=("http://dnsmap.googlecode.com/files/dnsmap-${pkgver}.tar.gz")
+sha1sums=('a9a8a17102825510d16c1f8af33ca74407c18c70')
+
+build() {
+  cd "$srcdir/dnsmap-$pkgver"
+
+  make
+}
+
+package() {
+  cd "$srcdir/dnsmap-$pkgver"
+
+  install -Dm755 dnsmap "$pkgdir/usr/bin/dnsmap"
+  install -Dm755 dnsmap-bulk.sh "$pkgdir/usr/bin/dnsmap-bulk"
+  install -Dm644 wordlist_TLAs.txt "$pkgdir/usr/share/dnsmap/wordlist_TLAs.txt"
+}

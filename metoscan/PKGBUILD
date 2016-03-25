@@ -1,0 +1,36 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='metoscan'
+pkgver='05'
+pkgrel=3
+groups=('blackarch' 'blackarch-webapp')
+pkgdesc='Tool for scanning the HTTP methods supported by a webserver. It works
+by testing a URL and checking the responses for the different requests.'
+url='http://www.open-labs.org/'
+license=('custom')
+depends=('curl')
+makedepends=('gcc' 'make')
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+source=("http://www.open-labs.org/metoscan$pkgver.tar.gz")
+sha1sums=('72a09411e6c6c27102ecee7abec869aaeeeca2be')
+
+prepare() {
+  cd "$srcdir/metoscan$pkgver"
+
+  sed -i '/CURLOPT_MUTE/d' get_url.c
+  sed -i "s:gcc :gcc $CFLAGS :" Makefile
+}
+
+build() {
+  cd "$srcdir/metoscan$pkgver"
+
+  make
+}
+
+package() {
+  cd "$srcdir/metoscan$pkgver"
+
+  install -Dm755 metoscan "$pkgdir/usr/bin/metoscan"
+  install -Dm644 README.txt "$pkgdir/usr/share/doc/metoscan/README.txt"
+}

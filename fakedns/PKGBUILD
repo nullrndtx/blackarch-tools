@@ -1,0 +1,42 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='fakedns'
+pkgver=42.b67ecab
+pkgrel=1
+groups=('blackarch' 'blackarch-proxy' 'blackarch-spoof')
+pkgdesc='A regular-expression based python MITM DNS server with correct DNS request passthrough and "Not Found" responses.'
+arch=('any')
+url="https://github.com/Crypt0s/FakeDns"
+license=('GPL3')
+depends=('python2')
+makedepends=('git')
+source=('git+https://github.com/Crypt0s/FakeDns.git')
+sha1sums=('SKIP')
+
+pkgver() {
+  cd "$srcdir/FakeDns"
+
+  echo $(git rev-list --count HEAD).$(git rev-parse --short HEAD)
+}
+
+prepare() {
+  cd "$srcdir/FakeDns"
+
+  sed -i 's|bin/python$|bin/python2|' *.py
+}
+
+package() {
+  cd "$srcdir/FakeDns"
+
+  mkdir -p "$pkgdir/usr/bin/"
+  mkdir -p "$pkgdir/usr/share/fakedns"
+  mkdir -p "$pkgdir/usr/share/doc/fakedns"
+
+  cp -a dns.conf.example fakedns.py "$pkgdir/usr/share/fakedns/"
+  cp -a README.md "$pkgdir/usr/share/doc/fakedns/"
+
+  chmod +x "$pkgdir/usr/share/fakedns/fakedns.py"
+
+  ln -s "/usr/share/fakedns/fakedns.py" "$pkgdir/usr/bin/fakedns"
+}

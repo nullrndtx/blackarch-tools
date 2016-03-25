@@ -1,0 +1,48 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='armitage'
+pkgver=150813
+pkgrel=2
+epoch=4
+groups=('blackarch' 'blackarch-exploitation' 'blackarch-automation')
+pkgdesc='A graphical cyber attack management tool for Metasploit.'
+url='http://www.fastandeasyhacking.com/'
+arch=('any')
+license=('GPL')
+depends=('metasploit' 'java-environment' 'nmap' 'postgresql' 'ruby-msgpack')
+makedepends=('apache-ant' 'zip' 'unzip' 'subversion')
+install='armitage.install'
+source=("http://www.fastandeasyhacking.com/download/armitage${pkgver}.tgz"
+        'armitage.install')
+sha1sums=('6dd94a85ea158873bc98348ce0704148995c6935'
+          'c291382f3e56168a0a288acc02577dbf16852feb')
+
+package() {
+  cd "$srcdir/armitage"
+
+  mkdir -p "$pkgdir/usr/bin"
+  mkdir -p "$pkgdir/usr/share/armitage"
+
+  install -Dm644 -t "$pkgdir/usr/share/doc/armitage" readme.txt whatsnew.txt
+
+  rm readme.txt whatsnew.txt
+
+  cp -a * "$pkgdir/usr/share/armitage"
+
+  cat > "$pkgdir/usr/bin/armitage" << EOF
+#!/bin/sh
+cd /usr/share/armitage
+exec ./armitage "\$@"
+EOF
+
+  chmod +x "$pkgdir/usr/bin/armitage"
+
+  cat > "$pkgdir/usr/bin/teamserver" << EOF
+#!/bin/sh
+cd /usr/share/armitage
+exec ./teamserver "\$@"
+EOF
+
+  chmod +x "$pkgdir/usr/bin/teamserver"
+}

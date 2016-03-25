@@ -1,0 +1,33 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='wsfuzzer'
+pkgver='1.9.5'
+pkgrel=7
+groups=('blackarch' 'blackarch-fuzzer' 'blackarch-webapp')
+pkgdesc='A Python tool written to automate SOAP pentesting of web services.'
+url='https://www.owasp.org/index.php/Category:OWASP_WSFuzzer_Project'
+arch=('any')
+license=('LGPL')
+depends=('python2' 'python2-pyxml' 'java-environment')
+source=("http://downloads.sourceforge.net/project/wsfuzzer/wsfuzzer/version1.9.5/wsfuzzer-${pkgver}.tar.gz")
+sha1sums=('6cbb5b0513ed1422504957ffd54839a0ab9b8af6')
+
+prepare() {
+  cd "$srcdir"
+
+  sed -i '1i\#!/usr/bin/env python2' *.py
+}
+
+package() {
+  cd "$srcdir"
+
+  mkdir -p "$pkgdir/usr/bin"
+  mkdir -p "$pkgdir/usr/share/wsfuzzer"
+
+  cp -La --no-preserve=ownership * "$pkgdir/usr/share/wsfuzzer"
+
+  find "$pkgdir" -name .svn -exec rm -rf {} +
+
+  ln -s /usr/share/wsfuzzer/WSFuzzer.py "$pkgdir/usr/bin/wsfuzzer"
+}

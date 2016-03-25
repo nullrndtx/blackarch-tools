@@ -1,0 +1,39 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='perl-cisco-copyconfig'
+pkgver='1.4'
+pkgrel='1'
+pkgdesc="IOS running-config manipulation"
+arch=('any')
+license=('PerlArtistic' 'GPL')
+options=('!emptydirs')
+depends=('perl-net-snmp')
+makedepends=()
+url='http://search.cpan.org/dist/Cisco-CopyConfig'
+source=("http://search.cpan.org/CPAN/authors/id/A/AA/AARONSCA/Cisco-CopyConfig-${pkgver}.tgz")
+sha1sums=('c84377f41c636d1e26f23a39672748bef770b839')
+_distdir="Cisco-CopyConfig-$pkgver"
+
+build() {
+  cd "$srcdir"
+
+  ( export PERL_MM_USE_DEFAULT=1 PERL5LIB=""                 \
+      PERL_AUTOINSTALL=--skipdeps                            \
+      PERL_MM_OPT="INSTALLDIRS=vendor DESTDIR='$pkgdir'"     \
+      PERL_MB_OPT="--installdirs vendor --destdir '$pkgdir'" \
+      MODULEBUILDRC=/dev/null
+
+    cd "$srcdir/$_distdir"
+    /usr/bin/perl Makefile.PL
+    make
+  )
+}
+
+package() {
+  cd "$srcdir/$_distdir"
+
+  make install
+
+  find "$pkgdir" -name .packlist -o -name perllocal.pod -delete
+}

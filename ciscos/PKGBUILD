@@ -1,0 +1,24 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='ciscos'
+pkgver='1.3'
+pkgrel=1
+pkgdesc="Scans class A, B, and C networks for cisco routers which have telnet open and have not changed the default password from cisco."
+groups=('blackarch' 'blackarch-scanner')
+license=('custom')
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+source=("http://packetstorm.sigterm.no/cisco/ciscos.c")
+sha1sums=('618ea3a1218a877b09e2c789f6f0debaea99bae6')
+
+build() {
+  cd "$srcdir"
+
+  gcc $CFLAGS -o ciscos ciscos.c
+}
+
+package() {
+  cd "$srcdir"
+
+  install -D -m755 "ciscos" "$pkgdir/usr/bin/ciscos"
+}

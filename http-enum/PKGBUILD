@@ -1,0 +1,35 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='http-enum'
+pkgver='0.3'
+pkgrel=3
+pkgdesc='A tool to enumerate the enabled HTTP methods supported on a webserver.'
+arch=('any')
+url='https://www.thexero.co.uk/tools/http-enum/'
+license=('custom:unknown')
+depends=('python2')
+groups=('blackarch' 'blackarch-scanner')
+source=('https://www.thexero.co.uk/downloads/http-enum.tar')
+sha1sums=('846d121596a1f68893555e282298a1205fe01990')
+
+prepare() {
+  cd "$srcdir/http-enum"
+
+  sed -i '1s|python$|env python2|' http-enum.py
+}
+
+package() {
+  cd "$srcdir"
+
+  install -D -m755 "$srcdir/http-enum/http-enum.py" \
+    "$pkgdir/usr/bin/http-enum"
+  install -D -m644 "$srcdir/http-enum/enum/apache" \
+    "$pkgdir/usr/share/http-enum/enum/apache"
+  install -D -m644 "$srcdir/http-enum/enum/frontpage" \
+    "$pkgdir/usr/share/http-enum/enum/frontpage"
+  install -D -m644 "$srcdir/http-enum/enum/sharepoint" \
+    "$pkgdir/usr/share/http-enum/enum/sharepoint"
+  install -D -m644 "$srcdir/http-enum/enum/tsweb" \
+    "$pkgdir/usr/share/http-enum/enum/tsweb"
+}

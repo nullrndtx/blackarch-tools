@@ -1,0 +1,33 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='cms-explorer'
+pkgver='1.0'
+pkgrel=5
+groups=('blackarch' 'blackarch-fingerprint' 'blackarch-webapp')
+pkgdesc="Designed to reveal the specific modules, plugins, components and themes that various cms driven websites are running"
+arch=('any')
+url='http://code.google.com/p/cms-explorer'
+license=('GPL3')
+makedepends=('subversion')
+depends=('perl')
+source=('svn+http://cms-explorer.googlecode.com/svn/trunk/')
+sha1sums=('SKIP')
+
+package() {
+  cd "$srcdir/trunk"
+
+  # Base directories.
+  mkdir -p "$pkgdir/usr/share/cms-explorer"
+  mkdir -p "$pkgdir/usr/bin"
+
+  install -m644 *.txt *.pm "$pkgdir/usr/share/cms-explorer"
+  install -m755 *.pl "$pkgdir/usr/share/cms-explorer"
+
+  cat > "$pkgdir/usr/bin/cms-explorer" <<EOF
+#!/bin/sh
+cd /usr/share/cms-explorer
+exec perl cms-explorer.pl "\$@"
+EOF
+  chmod +x "$pkgdir/usr/bin/cms-explorer"
+}

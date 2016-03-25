@@ -1,0 +1,40 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='sslnuke'
+pkgver=5.c5faeaa
+pkgrel=2
+groups=('blackarch' 'blackarch-cracker' 'blackarch-proxy')
+pkgdesc='Transparent proxy that decrypts SSL traffic and prints out IRC messages.'
+url='https://github.com/jtripper/sslnuke'
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+license=('GPL2')
+install='sslnuke.install'
+makedepends=('git')
+source=('git+https://github.com/jtRIPper/sslnuke.git'
+        'sslnuke.install')
+sha1sums=('SKIP'
+          '7a6a2a5b05a67ce88bc8300db583ec7c2ea11f08')
+
+pkgver() {
+  cd "$srcdir/sslnuke"
+
+  echo $(git rev-list --count HEAD).$(git rev-parse --short HEAD)
+}
+
+build() {
+  cd "$srcdir/sslnuke"
+
+  make
+}
+
+package() {
+  cd "$srcdir/sslnuke"
+
+  mkdir -p "$pkgdir/usr/bin/"
+  mkdir -p "$pkgdir/usr/share/sslnuke/"
+  mkdir -p "$pkgdir/usr/share/licenses/sslnuke/"
+
+  install -m644 LICENSE "$pkgdir/usr/share/licenses/sslnuke/"
+  install -m755 sslnuke "$pkgdir/usr/bin/sslnuke"
+}

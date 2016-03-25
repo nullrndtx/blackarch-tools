@@ -1,0 +1,30 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='evilgrade'
+pkgver='2.0.0'
+pkgrel=7
+groups=('blackarch' 'blackarch-misc')
+pkgdesc="Modular framework that takes advantage of poor upgrade implementations by injecting fake updates"
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+url='http://www.infobyte.com.ar/developments.html'
+license=('GPL')
+depends=('perl' 'perl-data-dump' 'perl-io-socket-ssl' 'perl-digest-sha1')
+source=("http://www.infobyte.com.ar/down/isr-evilgrade-$pkgver.tar.gz"
+        "evilgrade")
+sha1sums=('ee4d1ab3f61977562e3b68e95d1c72d80149577e'
+          '92df778f970c01c39a9a34df1ed2f4a556af1a5f')
+
+package() {
+  cd "$srcdir/isr-evilgrade"
+
+  # Make base directories.
+  mkdir -p "$pkgdir/usr/share/evilgrade"
+  mkdir -p "$pkgdir/usr/share/doc/evilgrade"
+
+  cp --no-preserve=ownership -r agent evilgrade include isrcore modules \
+     "$pkgdir/usr/share/evilgrade"
+
+  install -m644 docs/{AUTHOR,CHANGES,CONTRIBUTORS,FILES,README} "$pkgdir/usr/share/doc/evilgrade"
+  install -Dm755 "$srcdir/evilgrade" "$pkgdir/usr/bin/evilgrade"
+}

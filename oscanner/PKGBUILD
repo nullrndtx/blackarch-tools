@@ -1,0 +1,43 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='oscanner'
+pkgver='1.0.6'
+pkgrel=6
+groups=('blackarch' 'blackarch-fuzzer')
+pkgdesc='An Oracle assessment framework developed in Java.'
+arch=('any')
+url='http://www.cqure.net/wp/oscanner/'
+license=('GPL')
+depends=('java-environment')
+source=("http://www.cqure.net/tools/oscanner_bin_${pkgver//./_}.zip")
+sha1sums=('87a7268d7d1122137cfaab09c08980d95926732b')
+
+prepare() {
+  cd "$srcdir/oscanner_bin"
+  sed -i "4i\\cd /usr/share/oscanner" *.sh
+}
+
+package() {
+  cd "$srcdir/oscanner_bin"
+
+  rm COPYING
+
+  # This isn't Windows.
+  rm *.exe
+
+  # This isn't a FAT filesystem.
+  chmod -R 644 .
+  chmod -R +X .
+  chmod +x *.sh
+
+  # This isn't love.
+  mkdir -p "$pkgdir/usr/share/oscanner"
+  mkdir -p "$pkgdir/usr/bin"
+
+  cp --no-preserve=ownership -r * "$pkgdir/usr/share/oscanner"
+
+  # This isn't Java.
+  mv "$pkgdir/usr/share/oscanner/oscanner.sh" "$pkgdir/usr/bin/oscanner"
+  mv "$pkgdir/usr/share/oscanner/reportviewer.sh" "$pkgdir/usr/bin/reportviewer"
+}

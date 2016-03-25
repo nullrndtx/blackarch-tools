@@ -1,0 +1,65 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='inetsim'
+pkgver='1.2.5'
+pkgrel=1
+groups=('blackarch' 'blackarch-defensive' 'blackarch-honeypot')
+pkgdesc='A software suite for simulating common internet services in a lab environment, e.g. for analyzing the network behaviour of unknown malware samples.'
+url='http://www.inetsim.org'
+arch=('any')
+license=('GPL3')
+depends=('perl' 'perl-net-server' 'perl-ipc-shareable' 'openssl')
+install='inetsim.install'
+source=("http://www.inetsim.org/downloads/inetsim-${pkgver}.tar.gz")
+sha1sums=('b36f9c732e528105571e57777af81f70704be8ea')
+
+package() {
+  cd "$srcdir/inetsim-$pkgver"
+
+  mkdir -p "$pkgdir/etc"
+  mkdir -p "$pkgdir/usr/bin"
+  mkdir -p "$pkgdir/var/lib"
+  mkdir -p "$pkgdir/usr/share/inetsim"
+  mkdir -p "$pkgdir/usr/share/doc/inetsim"
+  mkdir -p "$pkgdir/var/log/inetsim"
+
+  # Program.
+  cp -R --no-preserve=ownership contrib lib inetsim "$pkgdir/usr/share/inetsim"
+
+  # Logs.
+  ln -s /var/log/inetsim "$pkgdir/usr/share/inetsim/report"
+  ln -s /var/log/inetsim "$pkgdir/usr/share/inetsim/log"
+
+  # Data.
+  cp -R --no-preserve=ownership data "$pkgdir/var/lib/inetsim"
+  ln -s /var/lib/inetsim "$pkgdir/usr/share/inetsim/data"
+
+  # Configuration.
+  cp -R --no-preserve=ownership conf "$pkgdir/etc/inetsim"
+  ln -s /etc/inetsim "$pkgdir/usr/share/inetsim/conf"
+
+  # Man pages.
+  cp -R --no-preserve=ownership man "$pkgdir/usr/share"
+
+  # Documentation.
+  install -m644 CHANGES README doc/* "$pkgdir/usr/share/doc/inetsim"
+
+  # Permissions.
+  # This is pretty much copypasted from the upstream-provided `setup.sh`.
+  # Group ownership is set in the install file.
+  chmod 770 "$pkgdir/var/log/inetsim"
+  chmod g+w "$pkgdir/var/lib/inetsim/http/postdata"
+  chmod g+w "$pkgdir/var/lib/inetsim/ftp/upload"
+  chmod g+w "$pkgdir/var/lib/inetsim/tftp/upload"
+
+  # TODO: install cleanup.sh?
+  # Joint script.
+  cat > "$pkgdir/usr/bin/inetsim" << EOF
+#!/bin/sh
+cd /usr/share/inetsim
+exec perl -T inetsim "\$@"
+EOF
+
+  chmod +x "$pkgdir/usr/bin/inetsim"
+}

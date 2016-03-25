@@ -1,0 +1,36 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='sbd'
+pkgver='1.36'
+pkgrel=6
+groups=('blackarch' 'blackarch-crypto' 'blackarch-networking')
+pkgdesc="Netcat-clone, portable, offers strong encryption - features AES-128-CBC + HMAC-SHA1 encryption, program execution (-e), choosing source port, continuous reconnection with delay + more"
+url='http://www2.packetstormsecurity.org/cgi-bin/search/search.cgi?searchvalue=sbd'
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+license=('GPL')
+source=("http://packetstorm.sigterm.no/UNIX/netcat/sbd-${pkgver}.tar.gz")
+sha1sums=('859f2c4ae4af8ad2d5ad258d10d5a7174139cfbb')
+
+build() {
+  cd "$srcdir/sbd-$pkgver"
+
+  make unix
+}
+
+package() {
+  cd "$srcdir/sbd-$pkgver"
+
+  # Base directories.
+  mkdir -p "$pkgdir/usr/bin"
+  mkdir -p "$pkgdir/usr/share/doc/sbd"
+  mkdir -p "$pkgdir/usr/share/licenses/sbd"
+
+  # Bin.
+  install -Dm755 "$srcdir/sbd-$pkgver/sbd" "$pkgdir/usr/bin/sbd"
+
+  # Docs.
+  install -Dm644 README "$pkgdir/usr/share/doc/sbd/README"
+  install -Dm644 CHANGES "$pkgdir/usr/share/doc/sbd/CHANGES"
+  install -Dm644 COPYING "$pkgdir/usr/share/licenses/sbd/COPYING"
+}

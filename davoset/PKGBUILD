@@ -1,0 +1,47 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='davoset'
+pkgver='1.2.7'
+pkgrel=1
+pkgdesc='A tool for using Abuse of Functionality and XML External Entities vulnerabilities on some websites to attack other websites.'
+arch=('any')
+url='http://websecurity.com.ua/davoset/'
+license=('custom:unknown')
+groups=('blackarch' 'blackarch-dos')
+depends=('perl')
+makedepends=('unrar' 'dos2unix')
+options=('!emptydirs')
+noextract=("davoset-${pkgver}.rar")
+install='davoset.install'
+source=("davoset-${pkgver}.rar::http://websecurity.com.ua/uploads/2015/DAVOSET_v.${pkgver}.rar")
+sha1sums=('3378f62541e8371459bca8d9083404cb7f0e35f8')
+
+prepare() {
+  cd "$srcdir"
+
+  # bsdtar cannot handle this archive
+  unrar e -ad -o+ davoset-$pkgver.rar
+
+  cd davoset-$pkgver
+
+  dos2unix -- *
+}
+
+package() {
+  cd "$srcdir/davoset-$pkgver"
+
+  mkdir -p "$pkgdir/usr/bin"
+  mkdir -p "$pkgdir/usr/share/davoset"
+
+  install -m755 davoset.pl "$pkgdir/usr/share/davoset"
+  install -m644 *.txt "$pkgdir/usr/share/davoset"
+
+  cat > "$pkgdir/usr/bin/davoset" << EOF
+#!/bin/sh
+cd /usr/share/davoset
+exec ./davoset.pl
+EOF
+
+  chmod +x "$pkgdir/usr/bin/davoset"
+}

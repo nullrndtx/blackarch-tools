@@ -1,0 +1,31 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='jnetmap'
+pkgver='0.5.4'
+pkgrel=1
+groups=('blackarch' 'blackarch-networking')
+pkgdesc='A network monitor of sorts.'
+arch=('any')
+url='http://www.rakudave.ch/jnetmap/?file=introduction'
+license=('GPL3')
+depends=('java-environment')
+source=("http://downloads.sourceforge.net/project/jnetmap/jNetMap%20${pkgver}/jNetMap-${pkgver}.jar")
+sha1sums=('a8fff29f037849da6bc37852f7457ff47281b0eb')
+
+package() {
+  cd "$srcdir"
+
+  mkdir -p "$pkgdir/usr/bin"
+
+  install -Dm755 jNetMap-${pkgver}.jar \
+    "$pkgdir/usr/share/jnetmap/jNetMap-$pkgver"
+  install -Dm644 guide.pdf "$pkgdir/usr/share/doc/jnetmap/guide.pdf"
+
+  cat > "$pkgdir/usr/bin/jnetmap" << EOF
+#!/bin/sh
+exec java -jar /usr/share/jnetmap/jNetMap-$pkgver "\$@"
+EOF
+
+  chmod a+x "$pkgdir/usr/bin/jnetmap"
+}

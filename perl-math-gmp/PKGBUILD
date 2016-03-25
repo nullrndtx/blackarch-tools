@@ -1,0 +1,29 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='perl-math-gmp'
+pkgver='2.07'
+pkgrel=1
+pkgdesc='High speed arbitrary size integer math.'
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+url="http://search.cpan.org/~turnstep/Math-GMP-${pkgver}/"
+license=('GPL' 'PerlArtistic')
+depends=('perl' 'gmp')
+options=(!emptydirs)
+source=("http://search.cpan.org/CPAN/authors/id/T/TU/TURNSTEP/Math-GMP-${pkgver}.tar.gz")
+sha1sums=('9e2a7f8532e2a530e0fb66a002b452a62a18d58d')
+
+build() {
+  cd "$srcdir/Math-GMP-$pkgver"
+
+  # Install module in vendor directories.
+  PERL_MM_USE_DEFAULT=1 perl Makefile.PL INSTALLDIRS=vendor
+
+  make
+}
+
+package() {
+  cd "$srcdir/Math-GMP-$pkgver"
+
+  make install DESTDIR="$pkgdir/"
+}

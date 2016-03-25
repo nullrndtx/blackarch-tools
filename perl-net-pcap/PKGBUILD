@@ -1,0 +1,43 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='perl-net-pcap'
+_realname=Net-Pcap
+pkgver='0.17'
+pkgrel=7
+pkgdesc="Perl/CPAN Module Net::Pcap"
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+url='https://metacpan.org/release/Net-Pcap'
+license=("GPL" "PerlArtistic")
+options=('!emptydirs')
+source=("http://cpan.metacpan.org/authors/id/S/SA/SAPER/${_realname}-${pkgver}.tar.gz"
+        'makefile.patch'
+        'listdatalinks.patch')
+depends=('perl' 'libpcap')
+sha1sums=('eca0c42bf70cf9739a0f669d37df8c4815e1c836'
+          '44d638eea2159f3ca75e9aba95b0a02fc220df81'
+          '4c590b770d58cf73cb5cc87aad4c29da68556017')
+
+prepare() {
+  cd $srcdir/$_realname-$pkgver
+
+  patch -p1 <../makefile.patch
+  patch -p1 <../listdatalinks.patch
+}
+
+build() {
+  cd $srcdir/$_realname-$pkgver
+
+  # Install module in vendor directories.
+  PERL_MM_USE_DEFAULT=1 perl Makefile.PL INSTALLDIRS=vendor
+  make
+}
+package() {
+  cd $srcdir/$_realname-$pkgver
+
+  make install DESTDIR=$pkgdir/
+
+  # Remove perllocal.pod and .packlist.
+  find $pkgdir -name perllocal.pod -delete
+  find $pkgdir -name .packlist -delete
+}

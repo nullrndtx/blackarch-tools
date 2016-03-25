@@ -1,0 +1,30 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='bob-the-butcher'
+pkgver='0.7.1'
+pkgrel=2
+pkgdesc='A distributed password cracker package.'
+arch=('i686' 'x86_64')
+url='http://btb.banquise.net/'
+license=('GPL2')
+depends=('libevent')
+groups=('blackarch' 'blackarch-cracker')
+source=("http://packetstorm.sigterm.no/Crackers/bob-the-butcher-$pkgver.tar.gz")
+sha1sums=('d17a140796683c198fb762da80ca0cd3b8010e94')
+
+build() {
+  cd "$srcdir/bob-the-butcher-$pkgver"
+
+  ./configure --prefix=/usr --program-suffix="-sse2"
+  make CFLAGS="$CFLAGS"
+}
+
+package() {
+  cd "$srcdir/bob-the-butcher-$pkgver"
+
+  make DESTDIR="$pkgdir/" install
+
+  install -D -m644 "COPYING" \
+    "$pkgdir/usr/share/licenses/bob-the-butcher/COPYING"
+}

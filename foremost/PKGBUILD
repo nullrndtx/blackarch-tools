@@ -1,0 +1,43 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='foremost'
+pkgver='1.5.7'
+pkgrel=5
+groups=('blackarch' 'blackarch-forensic')
+pkgdesc="A console program to recover files based on their headers, footers, and internal data structures"
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+url='http://foremost.sourceforge.net/'
+license=('custom')
+makedepends=('patch')
+backup=('etc/foremost.conf')
+source=("http://foremost.sourceforge.net/pkg/foremost-${pkgver}.tar.gz"
+        'http://kambing.ui.edu/gentoo-portage/app-forensics/foremost/files/foremost-1.4-config-location.patch'
+        'foremost-makefile.diff')
+sha1sums=('c26d68990d7bd5245d5f7dc83c9217642a7a2056'
+          'c8edf7afaa6b546cd4c436722a9831329e721fc1'
+          '22dd241e880968de1859eca3735cf1f59b92adf7')
+
+prepare() {
+  cd "$srcdir/foremost-$pkgver"
+
+  patch -Np1 -i $srcdir/foremost-1.4-config-location.patch
+  patch -Np0 -i $srcdir/foremost-makefile.diff
+}
+
+build() {
+  cd "$srcdir/foremost-$pkgver"
+
+  make
+}
+
+package () {
+  cd "$srcdir/foremost-$pkgver"
+
+  mkdir -p $pkgdir/{etc,{usr/bin,usr/share/man/man8}}
+
+  make DESTDIR="$pkgdir" install
+
+  ./foremost -V > COPYRIGHT
+  install -Dm644 COPYRIGHT "$pkgdir/usr/share/licenses/foremost/COPYRIGHT"
+}

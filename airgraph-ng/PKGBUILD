@@ -1,0 +1,33 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='airgraph-ng'
+pkgver='2466'
+pkgrel=1
+pkgdesc='Graphing tool for the aircrack suite.'
+groups=('blackarch' 'blackarch-misc')
+arch=('any')
+url='http://www.aircrack-ng.org'
+license=('GPL2')
+depends=('graphviz' 'python2')
+makedepends=('subversion')
+source=('svn+http://svn.aircrack-ng.org/trunk/scripts/airgraph-ng')
+sha1sums=('SKIP')
+
+pkgver() {
+  cd "$srcdir/airgraph-ng"
+
+  svnversion | tr -d [A-z]
+}
+
+build() {
+  cd "$srcdir/airgraph-ng"
+
+  python2 setup.py build
+}
+
+package() {
+  cd "$srcdir/airgraph-ng"
+
+  python2 setup.py install --root="${pkgdir}/" --prefix=/usr
+}

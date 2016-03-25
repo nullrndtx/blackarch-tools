@@ -1,0 +1,48 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='perl-sub-name'
+pkgver='0.14'
+pkgrel=2
+pkgdesc='(Re)name a sub.'
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+license=('PerlArtistic' 'GPL')
+options=('!emptydirs')
+depends=('perl')
+url='http://search.cpan.org/dist/Sub-Name'
+source=("http://search.cpan.org/CPAN/authors/id/E/ET/ETHER/Sub-Name-${pkgver}.tar.gz")
+sha1sums=('efed5ab4d03f562ab469c3636c4dab28c5f64d30')
+
+# Function to change to the working directory and set
+# environment variables to override undesired options.
+prepareEnvironment() {
+  cd "$srcdir/Sub-Name-$pkgver"
+
+  export \
+    PERL_MM_USE_DEFAULT=1 \
+    PERL_AUTOINSTALL=--skipdeps \
+    PERL_MM_OPT="INSTALLDIRS=vendor DESTDIR='$pkgdir'" \
+    PERL_MB_OPT="--installdirs vendor --destdir '$pkgdir'" \
+    MODULEBUILDRC=/dev/null
+}
+
+build() {
+  cd "$srcdir"
+
+  prepareEnvironment
+
+  /usr/bin/perl Makefile.PL
+
+  make
+}
+
+package() {
+  cd "$srcdir"
+
+  prepareEnvironment
+
+  make install
+
+  # Remove "perllocal.pod" and ".packlist".
+  find "$pkgdir" -name .packlist -o -name perllocal.pod -delete
+}

@@ -1,0 +1,69 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='bluediving'
+pkgver='0.9'
+pkgrel=5
+pkgdesc="A Bluetooth penetration testing suite"
+url='http://bluediving.sourceforge.net/'
+license=('GPL')
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+depends=('bluez-utils' 'sox' 'obexftp' 'readline' 'expat' 'perl-xml-simple'
+         'openobex' 'libxml2')
+install=bluediving.install
+source=("http://downloads.sourceforge.net/sourceforge/bluediving/bluediving-$pkgver.tgz"
+        'btftp.patch')
+sha1sums=('53f8cbd189ba4147e38bb86c58fa4bf17fc65445'
+          '4e8b27cbb07036e6ba080af3e948223ae18b433c')
+
+prepare() {
+  cd "$srcdir/bluediving-$pkgver"
+
+  # Change the bluedivingNG.conf path to /etc.
+  sed -i -e 's/bluedivingNG.conf/\/etc\/bluedivingNG.conf/g' bluedivingNG.pl
+
+  # Change the paths of the compiled tools to /usr/bin/.
+  sed -i -e 's/tools\//\/usr\/bin\//g' bluedivingNG.conf
+
+  # Change the why-the-hell-am-I-having-such-a-long-name vcard path.
+  sed -i -e '/vcards\/AAAA/ c\  <vcard>/usr/share/bluediving/AAA.vcf</vcard>' bluedivingNG.conf
+
+  # Change the sounds paths.
+  sed -i -e 's/sounds\//\/usr\/share\/bluediving\//g' bluedivingNG.conf
+
+  # Fix libxml2 missing includes compilation error.
+  sed -i -e 's/gcc/gcc `xml2-config --cflags`/g' tools/btftp_src/Makefile
+
+  # Fix bss directory path.
+  sed -i -e 's/bss-0.6/bss-0.8/g' tools/make_tools.sh
+
+  cd tools/btftp_src
+  patch < "$srcdir/btftp.patch"
+
+  cp -f obex.c ../btobex_src
+}
+
+build() {
+  cd "$srcdir/bluediving-$pkgver/tools"
+  sh make_tools.sh
+}
+
+package() {
+  cd "$srcdir/bluediving-$pkgver/tools"
+
+  # Base directories.
+  mkdir -p "$pkgdir/etc"
+  mkdir -p "$pkgdir/usr/bin"
+
+  install -m755 atshell attest bdaddr btobex btftp greenplaque \
+                hcidump-crash hstest l2cap-packet l2cap_headersize_overflow \
+                rfcomm_shell "$pkgdir/usr/bin"
+
+  install -Dm755 "$srcdir/bluediving-$pkgver/bluedivingNG.pl" "$pkgdir/usr/bin/bluedivingNG.pl"
+  install -Dm644 "$srcdir/bluediving-$pkgver/bluedivingNG.conf" "$pkgdir/etc/bluedivingNG.conf"
+  install -Dm644 "$srcdir/bluediving-$pkgver/vcards"/AAAAA*.vcf \
+          "$pkgdir/usr/share/bluediving/AAA.vcf"
+
+  install -Dm644 "$srcdir/bluediving-$pkgver/sounds/explosion.wav" "$pkgdir/usr/share/bluediving/explosion.wav"
+  install -Dm644 "$srcdir/bluediving-$pkgver/tools/carwhisperer-0.2/out.raw" "$pkgdir/usr/share/bluediving/out.raw"
+}

@@ -1,0 +1,10 @@
+post_install() {
+  echo
+  echo "  >> To use BlackArch awesome config move the following files:"
+  echo "      /etc/xdg/awesome/rc.lua.blackarch -> /etc/xdg/awesome/rc.lua"
+  echo
+}
+
+post_upgrade() {
+  post_install
+}

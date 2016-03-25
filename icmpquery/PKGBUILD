@@ -1,0 +1,25 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='icmpquery'
+pkgver='1.0'
+pkgrel=4
+groups=('blackarch' 'blackarch-scanner')
+pkgdesc='Send and receive ICMP queries for address mask and current time.'
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+url='http://www.angio.net/security/'
+license=('custom')
+source=("http://www.angio.net/security/icmpquery.c")
+sha1sums=('45200767b30d642b154e2f7a2d9de51ac9243590')
+
+build() {
+  cd "$srcdir"
+
+  gcc icmpquery.c -o icmpquery
+}
+
+package() {
+  cd "$srcdir"
+
+  install -Dm755 icmpquery "$pkgdir/usr/bin/icmpquery"
+}

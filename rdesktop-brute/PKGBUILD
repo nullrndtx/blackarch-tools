@@ -1,0 +1,37 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='rdesktop-brute'
+_pkgname='rdesktop'
+pkgver='1.5.0'
+pkgrel=2
+depends=('libx11' 'openssl' 'libao' 'libsamplerate')
+pkgdesc='It connects to windows terminal servers - Bruteforce patch included.'
+url='http://www.rdesktop.org/'
+license=('GPL')
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+depends=('rdesktop')
+groups=('blackarch' 'blackarch-cracker')
+source=("http://downloads.sourceforge.net/$_pkgname/$_pkgname-$pkgver.tar.gz"
+        'http://www.foofus.net/~jmk/tools/rdp-brute-force-r805.diff')
+sha1sums=('aa1e56043782e04a0121357b24874e3ad6ae7b1d'
+          '24090dfde408b6adb02b9bf068e26e091b0cfcb2')
+
+prepare() {
+  cd "$srcdir/$_pkgname-$pkgver"
+
+  patch -i "$srcdir/rdp-brute-force-r805.diff"
+}
+
+build() {
+  cd "$srcdir/$_pkgname-$pkgver"
+
+  ./configure --prefix=/usr
+  make
+}
+
+package() {
+  cd "$srcdir/$_pkgname-$pkgver"
+
+  install -D -m755 "rdesktop" "$pkgdir/usr/bin/rdesktop-brute"
+}

@@ -1,0 +1,31 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='sfuzz'
+pkgver='0.7.0'
+pkgrel=7
+groups=('blackarch' 'blackarch-fuzzer')
+pkgdesc='A simple fuzzer.'
+url='http://aconole.brad-x.com/programs/sfuzz.html'
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+license=('BSD')
+makedepends=('git')
+source=('git+https://github.com/orgcandman/Simple-Fuzzer')
+sha1sums=('SKIP')
+
+build() {
+  cd "$srcdir/Simple-Fuzzer"
+
+  ./configure --prefix=/usr
+
+  make
+}
+
+package() {
+  cd "$srcdir/Simple-Fuzzer"
+
+  mkdir -p "$pkgdir/usr/bin"
+  mkdir -p "$pkgdir/usr/share"
+
+  make BIN_DIR="$pkgdir/usr/bin" SHARE_DIR="$pkgdir/usr/share/" install
+}

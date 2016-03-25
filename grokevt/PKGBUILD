@@ -1,0 +1,38 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='grokevt'
+pkgver=122.3f999e7
+pkgrel=1
+pkgdesc='A collection of scripts built for reading Windows® NT/2K/XP/2K eventlog files.'
+url='http://code.google.com/p/grokevt/'
+arch=('any')
+license=('GPL')
+depends=('python2' 'reglookup' 'cpio')
+makepdepends=('git')
+groups=('blackarch' 'blackarch-forensic')
+source=('git+https://github.com/ecbftw/grokevt.git')
+sha1sums=('SKIP')
+
+pkgver() {
+  cd "$srcdir/grokevt"
+
+  echo $(git rev-list --count HEAD).$(git rev-parse --short HEAD)
+}
+
+build() {
+  cd "$srcdir/grokevt"
+
+  make
+}
+
+package() {
+  cd "$srcdir/grokevt"
+
+  make PREFIX="$pkgdir/usr" ETC_PREFIX="$pkgdir/etc/grokevt" \
+    MAN_PREFIX="$pkgdir/usr/share/man" install
+
+  rm -rf "$pkgdir/usr/share/man"
+  mv "$pkgdir/usr/share/doc/grokevt/man" "$pkgdir/usr/share/"
+  rm -rf "$pkgdir/usr/share/doc"
+}

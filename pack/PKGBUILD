@@ -1,0 +1,56 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='pack'
+_pkgname=PACK
+pkgver='0.0.4'
+pkgrel=7
+groups=('blackarch' 'blackarch-cracker')
+pkgdesc="Password Analysis and Cracking Kit"
+url='http://thesprawl.org/projects/pack/'
+arch=('any')
+license=('custom:unknown')
+depends=('python2' 'aspell' 'aspell-en')
+source=("http://thesprawl.org/media/projects/PACK-${pkgver}.tar.gz"
+        'fix-all-the-things.patch')
+sha1sums=('a643777072ff683aa62a7ae0c76c10fb4fbb8b8a'
+          '97d12b3c2e8b1164e214b9176bfa7b6406be4f69')
+
+prepare() {
+  cd "$srcdir/PACK-$pkgver"
+
+  patch -Np1 -i ../fix-all-the-things.patch
+}
+
+package() {
+  cd "$srcdir/PACK-$pkgver"
+
+  mkdir -p pack
+  touch pack/__init__.py
+
+  install -Dm755 statsgen.py "$pkgdir/usr/bin/statsgen"
+  install -Dm755 maskgen.py "$pkgdir/usr/bin/maskgen"
+  install -Dm755 policygen.py "$pkgdir/usr/bin/policygen"
+  install -Dm755 rulegen.py "$pkgdir/usr/bin/rulegen"
+  install -Dm644 README "$pkgdir/usr/share/doc/pack/README"
+
+  install -Dm644 pack/__init__.py "$pkgdir/usr/lib/python2.7/pack/__init__.py"
+
+  mkdir -p "$pkgdir/usr/lib/python2.7/pack/enchant/checker"
+  install -m644 enchant/*.py "$pkgdir/usr/lib/python2.7/pack/enchant"
+  install -m644 enchant/checker/*.py \
+    "$pkgdir/usr/lib/python2.7/pack/enchant/checker"
+  install -Dm644 enchant/lib/enchant/README.txt \
+    "$pkgdir/usr/lib/python2.7/pack/enchant/lib/enchant/README.txt"
+
+  install -Dm644 enchant/share/enchant/README.txt \
+    "$pkgdir/usr/lib/python2.7/pack/enchant/share/enchant/README.txt"
+  install -Dm644 enchant/share/enchant/ispell/README.txt \
+    "$pkgdir/usr/lib/python2.7/pack/enchant/share/enchant/ispell/README.txt"
+  install -Dm644 enchant/share/enchant/myspell/README.txt \
+    "$pkgdir/usr/lib/python2.7/pack/enchant/share/enchant/myspell/README.txt"
+
+  mkdir -p "$pkgdir/usr/lib/python2.7/pack/enchant/tokenize"
+  install -m644 enchant/tokenize/*.py \
+    "$pkgdir/usr/lib/python2.7/pack/enchant/tokenize"
+}

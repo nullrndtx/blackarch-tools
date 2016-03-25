@@ -1,0 +1,21 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='twofi'
+pkgver='2.0'
+pkgrel=2
+groups=('blackarch' 'blackarch-recon')
+pkgdesc='Twitter Words of Interest.'
+arch=('any')
+url='http://www.digininja.org/projects/twofi.php'
+license=('CCPL')
+depends=('ruby' 'ruby-json')
+source=("http://www.digininja.org/files/twofi_${pkgver}-beta.tar.bz2")
+sha1sums=('664bb4b6d39d59bd72c45853ea29c79fff7eddea')
+
+package() {
+  cd "$srcdir"
+
+  install -Dm755 "$srcdir/twofi/twofi.rb" "$pkgdir/usr/bin/twofi"
+  install -Dm644 "$srcdir/twofi/README" "$pkgdir/usr/share/doc/twofi/README"
+}

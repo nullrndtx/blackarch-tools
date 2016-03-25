@@ -1,0 +1,30 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='braces'
+pkgver='0.4'
+pkgrel=1
+pkgdesc='A Bluetooth Tracking Utility.'
+url='http://braces.shmoo.com/'
+groups=('blackarch' 'blackarch-bluetooth')
+license=('GPL')
+depends=('php' 'mysql')
+arch=('any')
+source=("http://braces.shmoo.com/blackhat-${pkgver//./}.tar.gz")
+sha1sums=('8e9a5ff3287a66c7abf2d14d3bd88d13b12f1181')
+
+package() {
+  cd "$srcdir/blackhat-${pkgver//./}"
+
+  # Bin
+  install -Dm755 "braces/braces.pl" "$pkgdir/usr/bin/braces"
+
+  # Doc
+  install -Dm644 "braces/README" "pkgdir/usr/share/braces/README2"
+  install -Dm644 "README" "$pkgdir/usr/share/braces/README"
+
+  # Data
+  install -Dm644 "data.txt" "$pkgdir/usr/share/braces/data.txt"
+
+  cp -r html maps "$pkgdir/usr/share/braces/"
+}

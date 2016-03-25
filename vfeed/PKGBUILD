@@ -1,0 +1,44 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='vfeed'
+pkgver=49.c8cf0ec
+pkgrel=1
+epoch=1
+groups=('blackarch' 'blackarch-misc')
+pkgdesc='Open Source Cross Linked and Aggregated Local Vulnerability Database main repository.'
+url='http://www.toolswatch.org/vfeed'
+arch=('any')
+license=('BSD')
+depends=('python2')
+makedepends=('git')
+source=('git+https://github.com/toolswatch/vFeed.git')
+sha1sums=('SKIP')
+
+pkgver() {
+  cd "$srcdir/vFeed"
+
+  echo $(git rev-list --count HEAD).$(git rev-parse --short HEAD)
+}
+
+package() {
+  cd "$srcdir/vFeed"
+
+  mkdir -p "$pkgdir/usr/bin/"
+  mkdir -p "$pkgdir/usr/share/vfeed"
+
+  install -Dm644 -t "$pkgdir/usr/share/doc/vfeed" CHANGELOG.md README.md CREDITS
+  install -Dm644 LICENSE.md "$pkgdir/usr/share/licenses/vfeed/LICENSE.md"
+
+  rm -rf LICENSE.md CHANGELOG.md README.md CREDITS docs/
+
+  cp -a --no-preserve=ownership * "$pkgdir/usr/share/vfeed"
+
+  cat > "$pkgdir/usr/bin/vfeed" << EOF
+#!/bin/sh
+cd /usr/share/vfeed
+exec python2 vfeedcli.py "\$@"
+EOF
+
+  chmod a+x "$pkgdir/usr/bin/vfeed"
+}

@@ -1,0 +1,47 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='xplico'
+pkgver=42.830dd00
+pkgrel=1
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+pkgdesc='Internet Traffic Decoder. Network Forensic Analysis Tool (NFAT).'
+groups=('blackarch' 'blackarch-forensic' 'blackarch-networking')
+url='http://www.xplico.org/'
+license=('GPL')
+depends=('tcpdump' 'libpcap' 'sqlite3' 'sox' 'lame' 'perl' 'apache' 'php'
+         'php-sqlite' 'php-apache' 'php-pear' 'perl' 'libnet' 'recode' 'json-c'
+         'python-httplib2' 'libmysqlclient' 'ndpi')
+optdepends=('geoip-citydata: City database for geoip IP location lookups'
+            'ghostpdl: reconstruct document printed with network printer'
+	          'videosnarf: decode VoIP based on RTP')
+makedepends=('git')
+install='xplico.install'
+source=('git+https://github.com/M0Rf30/xplico.git')
+sha1sums=('SKIP')
+
+pkgver() {
+  cd "$srcdir/xplico"
+
+  echo $(git rev-list --count HEAD).$(git rev-parse --short HEAD)
+}
+
+prepare() {
+  cd "$srcdir/xplico"
+
+  chmod a+x third-party/GeoIP-1.6.0/configure third-party/GeoIP-1.6.5/configure
+}
+
+build() {
+  cd "$srcdir/xplico"
+
+  make -j1
+}
+
+package() {
+  cd "$srcdir/xplico"
+
+  make DESTDIR="$pkgdir" install
+
+  chmod a+x "$pkgdir/opt/"{xplico,xplico/cfg}
+}

@@ -1,0 +1,26 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='python2-enum'
+pkgver='0.4.6'
+pkgrel=1
+pkgdesc='Robust enumerated type support in Python.'
+url='http://pypi.python.org/pypi/enum/'
+depends=('python2')
+makedepends=('python2-distribute')
+license=('GPL2')
+arch=('any')
+source=("https://pypi.python.org/packages/source/e/enum/enum-${pkgver}.tar.gz")
+sha1sums=('b8868b1370181e92bbffbcd18b3ccd2be1f0438d')
+
+build() {
+  cd "enum-$pkgver"
+
+  python2 setup.py build
+}
+
+package() {
+  cd "enum-$pkgver"
+
+  python2 setup.py install --root="$pkgdir" --optimize=1
+}

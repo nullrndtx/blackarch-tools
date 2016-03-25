@@ -1,0 +1,33 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='nfsshell'
+pkgver='19980519'
+pkgrel=4
+groups=('blackarch' 'blackarch-automation' 'blackarch-networking')
+pkgdesc='Userland NFS command tool.'
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+url='http://www.paramecium.org/~leendert/'
+license=('custom')
+depends=('readline')
+source=("http://www.cs.vu.nl/pub/leendert/nfsshell.tar.gz"
+        "gcc.patch"
+        "LICENSE")
+sha1sums=('3939bb683bb29cde3b47344251cce57a2eff1a5e'
+          '11749c22eb38bf2d9fcdc833ff506566efb7a304'
+          'e8fd7ba82fd4e0440c5b92bc3c3a78c99ec6a407')
+
+build() {
+  cd "$srcdir/nfs"
+
+  patch -Np1 -i "$srcdir/gcc.patch"
+  make
+}
+
+package() {
+  cd "$srcdir/nfs"
+
+  install -D -m755 nfs "$pkgdir/usr/bin/nfsshell"
+  mkdir -p "$pkgdir/usr/share/nfsshell"
+  cp -r *	"$pkgdir/usr/share/nfsshell/"
+}

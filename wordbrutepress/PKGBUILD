@@ -1,0 +1,34 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='wordbrutepress'
+pkgver=28.8061c52
+pkgrel=1
+groups=('blackarch' 'blackarch-cracker' 'blackarch-webapp')
+pkgdesc='Python script that performs brute forcing against WordPress installs using a wordlist.'
+arch=('any')
+url='http://www.homelab.it/index.php/2014/11/03/wordpress-brute-force-multithreading/'
+license=('custom:unknown')
+depends=('python2' 'python2-httplib2')
+makedepends=('git')
+source=('git+https://github.com/claudioviviani/wordbrutepress.git')
+sha1sums=('SKIP')
+
+pkgver() {
+  cd "$srcdir/wordbrutepress"
+
+  echo $(git rev-list --count HEAD).$(git rev-parse --short HEAD)
+}
+
+prepare() {
+  cd "$srcdir/wordbrutepress"
+
+  sed -i 's|/usr/bin/env python|/usr/bin/env python2|' wordbrutepress.py
+}
+
+package() {
+  cd "$srcdir/wordbrutepress"
+
+  install -Dm755 wordbrutepress.py "$pkgdir/usr/bin/wordbrutepress"
+  install -Dm644 README.md "$pkgdir/usr/share/doc/wordbrutepress/README.md"
+}

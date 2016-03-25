@@ -1,0 +1,44 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='bluebox-ng'
+pkgver='0.1.8'
+pkgrel=1
+epoch=1
+groups=('blackarch' 'blackarch-voip' 'blackarch-scanner' 'blackarch-fuzzer')
+pkgdesc='A GPL VoIP/UC vulnerability scanner.'
+url='https://github.com/jesusprubio/bluebox-ng'
+arch=('any')
+license=('GPL3')
+depends=('nodejs' 'coffee-script' 'python2' 'nmap')
+source=("https://github.com/jesusprubio/bluebox-ng/archive/${pkgver}.tar.gz")
+sha1sums=('8674c7aff2c7f05fb0423de8efe919dbb9764a81')
+
+prepare() {
+  cd "$srcdir/bluebox-ng-$pkgver"
+
+  npm --python=/usr/bin/python2 install 2>/dev/null
+
+  sed -i -re 's|#!\s*(/usr)?(/local)?/bin/.*python.*$|#!/usr/bin/env python2|g' $(egrep -rl '^\s*#!\s*(/usr)?(/local)?/bin/.*python')
+}
+
+package() {
+  cd "$srcdir/bluebox-ng-$pkgver"
+
+  mkdir -p "$pkgdir/usr/bin"
+
+  install -Dm644 README.md "$pkgdir/usr/share/doc/bluebox-ng/README.md"
+  install -Dm644 package.json \
+    "$pkgdir/usr/lib/node_modules/bluebox-ng/package.json"
+  install -m755 *.js "$pkgdir/usr/lib/node_modules/bluebox-ng/"
+
+  cp -a {artifacts,bin,examples,modules,node_modules,utils} \
+    "$pkgdir/usr/lib/node_modules/bluebox-ng/"
+
+  cat > "$pkgdir/usr/bin/bluebox-ng" << EOF
+#!/bin/sh
+ node /usr/lib/node_modules/bluebox-ng/bin/blueboxClient.js
+EOF
+
+  chmod a+x "$pkgdir/usr/bin/bluebox-ng"
+}

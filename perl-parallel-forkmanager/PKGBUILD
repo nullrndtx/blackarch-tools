@@ -1,0 +1,37 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='perl-parallel-forkmanager'
+pkgver='1.16'
+pkgrel=1
+pkgdesc='A simple parallel processing fork manager.'
+arch=('any')
+license=('PerlArtistic' 'GPL')
+options=('!emptydirs')
+makedepends=('perl-extutils-makemaker')
+url="http://search.cpan.org/~yanick/Parallel-ForkManager-${pkgver}"
+source=("http://search.cpan.org/CPAN/authors/id/Y/YA/YANICK/Parallel-ForkManager-${pkgver}.tar.gz")
+sha1sums=('b287a3f23c82662eec3bbfff93c205c2b0abed78')
+
+prepare() {
+  cd "${srcdir}/Parallel-ForkManager-${pkgver}"
+
+  export PERL_MM_USE_DEFAULT=1 PERL_AUTOINSTALL="--skipdeps" \
+    PERL_MM_OPT="INSTALLDIRS=vendor DESTDIR='$pkgdir'" \
+    PERL_MB_OPT="--installdirs vendor --destdir '$pkgdir'" \
+    MODULEBUILDRC=/dev/null
+
+  perl Makefile.PL
+}
+
+build() {
+  cd "${srcdir}/Parallel-ForkManager-${pkgver}"
+
+  make
+}
+
+package() {
+  cd "${srcdir}/Parallel-ForkManager-${pkgver}"
+
+  make DESTDIR="$pkgdir" install
+}

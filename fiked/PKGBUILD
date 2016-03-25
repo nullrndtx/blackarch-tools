@@ -1,0 +1,36 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='fiked'
+pkgver='0.0.5'
+pkgrel=6
+groups=('blackarch' 'blackarch-honeypot')
+pkgdesc='Fake IDE daemon.'
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+url='http://www.roe.ch/FakeIKEd'
+license=('GPL')
+depends=('libgcrypt' 'libnet')
+source=("http://mirror.roe.ch/rel/fiked/fiked-${pkgver}.tar.bz2")
+sha1sums=('f89ba58f534bdd19d97d7ad4ca2d6f69d0ca4aad')
+
+prepare() {
+  cd "$srcdir/fiked-$pkgver"
+
+  sed -i "s|libnet11-config|libnet-config|g" GNUmakefile
+  sed -i "s|/usr/local|/usr|g" GNUmakefile
+  sed -i "s|man/man1|share/man/man1|g" GNUmakefile
+  sed -i "s|CFLAGS?=.*|CFLAGS=$CFLAGS|" GNUmakefile
+}
+
+build() {
+  cd "$srcdir/fiked-$pkgver"
+
+  PREFIX=/usr make
+}
+
+package() {
+  cd "$srcdir/fiked-$pkgver"
+
+  install -Dm755 fiked "$pkgdir/usr/bin/fiked"
+  install -Dm644 fiked.1 "$pkgdir/usr/share/man/man1/fiked.1"
+}

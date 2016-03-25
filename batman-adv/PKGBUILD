@@ -1,0 +1,29 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='batman-adv'
+pkgver='2015.1'
+pkgrel=1
+groups=('blackarch' 'blackarch-wireless')
+pkgdesc='Batman kernel module, (included upstream since .38)'
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+url='http://www.open-mesh.net/'
+license=('GPL')
+makedepends=('linux-headers')
+install='batman-adv.install'
+source=("http://downloads.open-mesh.org/batman/releases/batman-adv-$pkgver/batman-adv-$pkgver.tar.gz")
+sha1sums=('b3101f8ba60de1377e8af3a5ec79db1f481c2a50')
+
+build() {
+  cd "$srcdir/batman-adv-$pkgver"
+
+  make KERNELPATH=/usr/lib/modules/$(uname -r)/build
+}
+
+package() {
+  cd "$srcdir/batman-adv-$pkgver"
+
+  install -Dm644 net/batman-adv/batman-adv.ko \
+    "$pkgdir/usr/lib/modules/$(uname -r)/updates/net/batman-adv/batman_adv.ko"
+  install -Dm644 README "$pkgdir/usr/share/doc/batman-adv/README"
+}

@@ -1,0 +1,21 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='httprint-win32'
+pkgver='301'
+pkgrel=2
+pkgdesc='A web server fingerprinting tool (Windows binaries).'
+arch=('any')
+url='http://net-square.com/httprint'
+license=('custom')
+groups=('blackarch' 'blackarch-windows' 'blackarch-fingerprint')
+source=("http://www.net-square.com/zip%20folders/httprint_win32_${pkgver}.zip")
+sha1sums=('0cac8f4b01cb7bce7eca5b61d22c14c3ae467e7e')
+
+package() {
+  cd "$srcdir/httprint_$pkgver/win32"
+
+  mkdir -p "$pkgdir/usr/share/windows/httprint-win32"
+
+  cp -a * "$pkgdir/usr/share/windows/httprint-win32"
+}

@@ -1,0 +1,47 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='secure-delete'
+pkgver='3.1'
+pkgrel=14
+groups=('blackarch' 'blackarch-anti-forensic' 'blackarch-defensive')
+pkgdesc='Secure file, disk, swap, memory erasure utilities.'
+url='http://www.thc.org/'
+conflicts=('srm')
+license=('GPL')
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+makedepends=('git')
+source=('git+https://github.com/BlackArch/secure-delete.git')
+sha1sums=('SKIP')
+
+prepare() {
+  cd "$srcdir/secure-delete"
+
+  sed -i -e 's/mktemp/mkstemp/g' sfill.c
+  sed -i -e "s/sswap smem sdel-mod.o/sswap smem/" -e '/test.*sdel-mod/d' \
+    -e "s/^srm: /srm: sdel-lib.o /" -e "s/^sfill: /sfill: sdel-lib.o /" \
+    -e "s/^sswap: /sswap: sdel-lib.o /" -e "s/^smem: /smem: sdel-lib.o /" \
+    Makefile
+}
+
+build() {
+  cd "$srcdir/secure-delete"
+
+  make
+}
+
+package() {
+  cd "$srcdir/secure-delete"
+
+  make INSTALL_DIR="$pkgdir/usr/bin" \
+       MAN_DIR="$pkgdir/usr/share/man" \
+       DOC_DIR="$pkgdir/usr/share/doc/secure-delete" \
+       install
+
+  chmod a+r "$pkgdir/usr/bin"/*
+
+  # Fix a conflict with community/smem.
+  mv "$pkgdir/usr/bin/smem" "$pkgdir/usr/bin/smem-secure-delete"
+  mv "$pkgdir/usr/share/man/man1/smem.1" \
+    "$pkgdir/usr/share/man/man1/smem-secure-delete.1"
+}

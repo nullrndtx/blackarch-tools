@@ -1,0 +1,44 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='ssldump'
+pkgver='0.9b3'
+pkgrel=12
+groups=('blackarch' 'blackarch-sniffer')
+pkgdesc="an SSLv3/TLS network protocol analyzer"
+url='http://www.rtfm.com/ssldump/'
+license=('custom')
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+depends=('libpcap>=1.0.0' 'openssl')
+source=("http://downloads.sourceforge.net/project/ssldump/ssldump/0.9b3/ssldump-0.9b3.tar.gz"
+        'openssl-0.9.8.patch')
+sha1sums=('a633a9a811a138eac5ed440d583473b644135ef5'
+          'da45aca9cbf901c0b786fd3f9dd33a6b7d5adcac')
+#http://www.rtfm.com/ssldump/ssldump-0.9b3.tar.gz
+
+prepare() {
+  cd $srcdir/ssldump-$pkgver
+  patch -Np0 -i ../openssl-0.9.8.patch
+  sed -in 's/libpcap.a/libpcap.so/g' configure
+}
+
+build() {
+  cd $srcdir/ssldump-$pkgver
+
+  # Arch64 fixes.
+  ./configure --prefix=/usr \
+              --build=i686-pc-linux-gnu \
+              --host=i686-pc-linux-gnu \
+              "--sbindir=$pkgdir/usr/bin"
+
+  make
+}
+
+package() {
+  cd $srcdir/ssldump-$pkgver
+
+  make "prefix=$pkgdir/usr" install
+
+  # Install license.
+  install -D -m644 COPYRIGHT $pkgdir/usr/share/licenses/ssldump/LICENSE
+}

@@ -1,0 +1,40 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='perl-test-checkdeps'
+pkgver='0.010'
+_distdir="Test-CheckDeps-${pkgver}"
+pkgrel=1
+pkgdesc='Check for presence of dependencies.'
+arch=('any')
+license=('PerlArtistic' 'GPL')
+options=('!emptydirs')
+depends=('perl' 'perl-cpan-meta-check' 'perl-module-build-tiny')
+makedepends=()
+url='http://search.cpan.org/dist/Test-CheckDeps'
+source=("http://search.cpan.org/CPAN/authors/id/L/LE/LEONT/Test-CheckDeps-${pkgver}.tar.gz")
+sha1sums=('6005b5db861133b63aec04dcfc96868fb3677600')
+
+build() {
+  cd "$srcdir"
+
+  ( export PERL_MM_USE_DEFAULT=1 PERL5LIB=""                 \
+      PERL_AUTOINSTALL=--skipdeps                            \
+      PERL_MM_OPT="INSTALLDIRS=vendor DESTDIR='$pkgdir'"     \
+      MODULEBUILDRC=/dev/null
+
+    cd "$srcdir/$_distdir"
+
+    /usr/bin/perl Makefile.PL --installdirs vendor --destdir "$pkgdir"
+
+    make
+  )
+}
+
+package() {
+  cd "$srcdir/$_distdir"
+
+  make install
+
+  find "$pkgdir" -name .packlist -o -name perllocal.pod -delete
+}

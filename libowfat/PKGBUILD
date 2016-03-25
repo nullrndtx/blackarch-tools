@@ -1,0 +1,35 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='libowfat'
+pkgver='0.30'
+pkgrel=1
+pkgdesc='GPL reimplementation of libdjb.'
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+url='http://www.fefe.de/libowfat/'
+depends=('dietlibc')
+license=('GPL')
+install='libowfat.install'
+options=('staticlibs')
+source=("http://www.fefe.de/libowfat/libowfat-${pkgver}.tar.xz")
+sha1sums=('5de5bd8b7869a24e518c58322db2ce0c24cef3c5')
+
+build() {
+  cd "$srcdir/libowfat-$pkgver"
+
+  DIET= make
+}
+
+package() {
+  cd $srcdir/libowfat-$pkgver
+
+  DIET= make prefix="$pkgdir/usr/" LIBDIR="$pkgdir/usr/lib" \
+    MAN3DIR="$pkgdir/usr/share/man/man3" install
+
+  cd "$pkgdir/usr/share/man/man3"
+
+  mv buffer.3 buffer-libowfat.3
+
+  # Fix a conflict with extra/tinycdb.
+  rm "$pkgdir/usr/include/cdb.h"
+}

@@ -1,0 +1,39 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='shellnoob'
+pkgver='2.1'
+pkgrel=2
+groups=('blackarch' 'blackarch-debugger' 'blackarch-exploitation')
+pkgdesc="A toolkit that eases the writing and debugging of shellcode"
+url="https://github.com/reyammer/shellnoob"
+arch=('any')
+license=('MIT')
+depends=('python2')
+source=("https://github.com/reyammer/shellnoob/archive/v${pkgver}.tar.gz")
+sha1sums=('545c7b3328f810ecbaf7d0e1364ed6cafd9dafd5')
+
+prepare() {
+  cd "shellnoob-$pkgver"
+
+  sed -e 's/env python$/env python2/g' -i shellnoob.py
+  sed -e "s|README|/usr/share/doc/shellnoob/README.md|g" -i shellnoob.py
+}
+
+package() {
+  cd "shellnoob-$pkgver"
+
+  mkdir -p "$pkgdir/usr/bin"
+  mkdir -p "$pkgdir/usr/lib/python2.7/site-packages"
+  mkdir -p "$pkgdir/usr/share/doc/shellnoob/samples/x86-linux"
+
+  install -m755 shellnoob.py \
+    "$pkgdir/usr/lib/python2.7/site-packages/shellnoob.py"
+  ln -s "/usr/lib/python2.7/site-packages/shellnoob.py" \
+    "$pkgdir/usr/bin/shellnoob"
+
+  install -m644 README.md "$pkgdir/usr/share/doc/shellnoob/README.md"
+  mkdir -p "$pkgdir/usr/share/doc/shellnoob/samples/x86-linux"
+  install -m644 samples/x86-linux/* \
+    "$pkgdir/usr/share/doc/shellnoob/samples/x86-linux"
+}

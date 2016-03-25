@@ -1,0 +1,29 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='dex2jar'
+pkgver='2.0'
+pkgrel=1
+groups=('blackarch' 'blackarch-hardware' 'blackarch-reversing')
+pkgdesc="A tool for converting Android's .dex format to Java's .class format"
+arch=('any')
+url='http://code.google.com/p/dex2jar'
+license=('Apache')
+depends=('java-environment')
+source=("https://github.com/pxb1988/dex2jar/releases/download/2.0/dex-tools-${pkgver}.zip")
+sha1sums=('9df351a67db5f327fb3726bb7b5c795029547301')
+
+package() {
+  cd "$srcdir/dex2jar-$pkgver"
+
+  mkdir -p "$pkgdir/usr/bin"
+  mkdir -p "$pkgdir/usr/share/dex2jar/lib"
+
+  install -m644 lib/*.jar "$pkgdir/usr/share/dex2jar/lib"
+  install -m755 *.sh "$pkgdir/usr/share/dex2jar"
+
+  for bin in d2j-*.sh
+  do
+    ln -s /usr/share/dex2jar/$bin "$pkgdir/usr/bin/${bin%.*}"
+  done
+}

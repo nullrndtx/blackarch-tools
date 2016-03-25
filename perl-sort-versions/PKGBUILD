@@ -1,0 +1,30 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='perl-sort-versions'
+pkgver='1.61'
+pkgrel=1
+pkgdesc='A perl module for sorting of revision-like numbers.'
+arch=('any')
+url='http://search.cpan.org/~edavis/Sort-Versions/'
+license=('GPL' 'PerlArtistic')
+depends=('perl')
+source=("http://search.cpan.org/CPAN/authors/id/N/NE/NEILB/Sort-Versions-${pkgver}.tar.gz")
+sha1sums=('2c44d2cba8ae026463f94899ac5c6cbe4aee05ca')
+
+build(){
+  cd "$srcdir/Sort-Versions-$pkgver"
+
+  PERL_MM_USE_DEFAULT=1 perl Makefile.PL INSTALLDIRS=vendor
+
+  make
+}
+
+package() {
+  cd "$srcdir/Sort-Versions-$pkgver"
+
+  make install DESTDIR="$pkgdir/"
+
+  # remove perllocal.pod and .packlist
+  find "$pkgdir" -name .packlist -o -name perllocal.pod -delete
+}

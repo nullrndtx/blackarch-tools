@@ -1,0 +1,46 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='cudahashcat'
+pkgver='2.01'
+pkgrel=1
+pkgdesc='Worlds fastest WPA cracker with dictionary mutation engine.'
+url=('http://hashcat.net/oclhashcat/')
+arch=('i686' 'x86_64')
+license=('custom')
+groups=('blackarch-cracker')
+optdepends=('nvidia-utils>=319.37: For gpu support via Nvidia CUDA')
+#source=("https://dl.packetstormsecurity.net/Crackers/cudaHashcat-${pkgver}.7z")
+source=("http://hashcat.net/files/cudaHashcat-${pkgver}.7z")
+sha1sums=('f8c66aaa1fbff057fbf7d2ed01bb7e1efdefae56')
+options=('!strip')
+
+package() {
+  cd "$srcdir/cudaHashcat-$pkgver"
+
+  find . \( -name "*.cmd" -o -name "*.exe" \) -exec rm {} +
+
+  mkdir -p "$pkgdir/usr/bin"
+  mkdir -p "$pkgdir/usr/share/cudahashcat"
+
+  install -Dm644 -t "$pkgdir/usr/share/doc/cudahashcat" docs/*
+
+  rm -rf docs
+
+  cp -a * "$pkgdir/usr/share/cudahashcat"
+
+  if [[ "$CARCH" == 'x86_64' ]];
+  then
+    cat > "$pkgdir/usr/bin/cudahashcat" << EOF
+#!/bin/bash
+/usr/share/cudahashcat/cudaHashcat64.bin "\$@"
+EOF
+    chmod a+x "$pkgdir/usr/bin/cudahashcat"
+  else
+    cat > "$pkgdir/usr/bin/cudahashcat" << EOF
+#!/bin/bash
+/usr/share/cudahashcat/cudaHashcat32.bin "\$@"
+EOF
+    chmod a+x "$pkgdir/usr/bin/cudahashcat"
+  fi
+}

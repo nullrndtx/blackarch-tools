@@ -1,0 +1,33 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='hashid'
+pkgver=397.7e8473a
+pkgrel=1
+epoch=1
+groups=('blackarch' 'blackarch-crypto')
+pkgdesc='Software to identify the different types of hashes used to encrypt data.'
+url='https://github.com/psypanda/hashID'
+license=('GPL3')
+arch=('any')
+depends=('python')
+makedepends=('git')
+source=('git+https://github.com/psypanda/hashID.git')
+sha1sums=('SKIP')
+
+pkgver() {
+  cd "$srcdir/hashID"
+
+  echo $(git rev-list --count HEAD).$(git rev-parse --short HEAD)
+}
+
+package() {
+  cd "$srcdir/hashID"
+
+  install -Dm755 hashid.py "$pkgdir/usr/bin/hashid"
+  install -Dm644 -t "$pkgdir/usr/share/doc/hashid/" README.rst doc/CHANGELOG \
+    doc/HASHINFO.xlsx
+  install -Dm644 doc/man/hashid.7 "$pkgdir/usr/share/man/man7/hashid.7"
+  install -Dm644 doc/LICENSE "$pkgdir/usr/share/licenses/hashid/LICENSE"
+  rm doc/LICENSE
+}

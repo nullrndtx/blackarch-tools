@@ -1,0 +1,28 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='sshscan'
+pkgver='1.0'
+pkgrel=1
+epoch=1
+groups=('blackarch' 'blackarch-cracker' 'blackarch-scanner')
+pkgdesc='A horizontal SSH scanner that scans large swaths of IPv4 space for a single SSH user and pass.'
+arch=('any')
+url='https://github.com/getdual/scripts-n-tools/blob/master/sshscan.py'
+license=('unknown')
+depends=('python2' 'python2-pexpect' 'python2-netaddr')
+makedepends=('git')
+source=('https://raw.githubusercontent.com/getdual/scripts-n-tools/master/sshscan.py')
+sha1sums=('db02afe30de468336036088c8583a0686a8483c5')
+
+prepare() {
+  cd "$srcdir"
+
+  sed -i 's|/usr/bin/env python|/usr/bin/env python2|' sshscan.py
+}
+
+package() {
+  cd "$srcdir"
+
+  install -Dm755 sshscan.py "$pkgdir/usr/bin/sshscan"
+}

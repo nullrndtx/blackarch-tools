@@ -1,0 +1,35 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='flamerobin'
+pkgver=2364.91e0dfa
+pkgrel=1
+pkgdesc='A tool to handle Firebird database management.'
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+url='http://www.flamerobin.org/'
+license=('expat')
+depends=('wxgtk' 'boost' 'libfbclient')
+makedepends=('git')
+source=('git://git.code.sf.net/p/flamerobin/flamerobin-git.git')
+sha1sums=('SKIP')
+
+pkgver() {
+  cd "$srcdir/flamerobin-git"
+
+  echo $(git rev-list --count HEAD).$(git rev-parse --short HEAD)
+}
+
+build() {
+  cd "$srcdir/flamerobin-git"
+
+  CXXFLAGS=-fpermissive ./configure --prefix=/usr \
+    --with-wx-config=/usr/bin/wx-config
+
+  make
+}
+
+package() {
+  cd "$srcdir/flamerobin-git"
+
+  make DESTDIR="$pkgdir" install
+}

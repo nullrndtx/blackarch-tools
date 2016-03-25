@@ -1,0 +1,31 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='wyd'
+pkgver='0.2'
+pkgrel=6
+groups=('blackarch' 'blackarch-cracker' 'blackarch-forensic')
+pkgdesc='Gets keywords from personal files. IT security/forensic tool.'
+arch=('any')
+url='http://www.remote-exploit.org/?page_id=418'
+license=('GPL')
+depends=('perl')
+source=("http://packetstorm.sigterm.no/Crackers/wyd-${pkgver}.tar.gz")
+sha1sums=('45d8bceb158f0f0864be77b0869cc463f6813dc0')
+
+package() {
+  cd "$srcdir/wyd-$pkgver"
+
+  mkdir -p "$pkgdir/usr/share/wyd"
+  mkdir -p "$pkgdir/usr/bin"
+
+  cp -r * "$pkgdir/usr/share/wyd"
+
+  cat > "$pkgdir/usr/bin/wyd" << EOF
+#!/bin/sh
+exec perl /usr/share/wyd/wyd.pl
+EOF
+
+  chmod 755 "$pkgdir/usr/bin/wyd"
+  chmod 755 "$pkgdir/usr/share/wyd/wyd.pl"
+}

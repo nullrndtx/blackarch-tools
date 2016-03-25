@@ -1,0 +1,41 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='websploit'
+pkgver='3.0.0'
+pkgrel=2
+groups=('blackarch' 'blackarch-exploitation' 'blackarch-fuzzer' 'blackarch-scanner' 'blackarch-social')
+pkgdesc='An Open Source Project For, Social Engineering Works, Scan, Crawler & Analysis Web, Automatic Exploiter, Support Network Attacks'
+arch=('any')
+url='http://code.google.com/p/websploit/'
+license=('GPL3')
+source=("http://downloads.sourceforge.net/project/websploit/WebSploit%20Framework%20V.${pkgver}/WebSploit-Framework-${pkgver}.tar.gz")
+depends=('python2' 'scapy')
+sha1sums=('2dba7f514b69f47978ee3b989f9c7c587e225b2a')
+
+package() {
+  cd "$srcdir/websploit"
+
+  mkdir -p "$pkgdir/usr/bin"
+  mkdir -p "$pkgdir/usr/share/websploit"
+
+  tar xzf wsf-`echo $pkgver | tr -d '.'`.tar.gz
+
+  cd "$srcdir/websploit/websploit"
+
+  install -Dm644 README.txt "$pkgdir/usr/share/doc/websploit/README.txt"
+  install -Dm644 COPYING.GPL "$pkgdir/usr/share/licenses/websploit/COPYING.GPL"
+
+  cp -a * "$pkgdir/usr/share/websploit"
+
+  # Fix incompetence.
+  find "$pkgdir" -name '*~' -delete
+
+  cat > "$pkgdir/usr/bin/websploit" << EOF
+#!/bin/sh
+cd /usr/share/websploit
+exec python2 websploit
+EOF
+
+  chmod +x "$pkgdir/usr/bin/websploit"
+}

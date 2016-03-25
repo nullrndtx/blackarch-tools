@@ -1,0 +1,23 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='python2-pyxml'
+pkgver='0.8.4'
+pkgrel=3
+pkgdesc="A fast and simple micro-framework for small web applications."
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+url="http://www.python.org/community/sigs/current/xml-sig/"
+license=('GPL')
+depends=('python2')
+source=("http://downloads.sourceforge.net/project/pyxml/pyxml/0.8.4/PyXML-$pkgver.tar.gz")
+sha1sums=('6f30d5907b75ef76809c19e0103d78f4a5fb027c')
+
+build() {
+  cd "$srcdir/PyXML-$pkgver"
+  python2 setup.py build
+}
+
+package() {
+  cd "$srcdir/PyXML-$pkgver"
+  python2 setup.py install --root="$pkgdir/" --optimize=1
+}

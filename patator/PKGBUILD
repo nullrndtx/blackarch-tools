@@ -1,0 +1,31 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='patator'
+pkgver=117.1a9f65e
+pkgrel=1
+epoch=1
+groups=('blackarch' 'blackarch-cracker')
+pkgdesc='A multi-purpose bruteforcer.'
+arch=('any')
+url='https://github.com/lanjelot/patator'
+license=('GPL2')
+depends=('python2' 'python2-paramiko' 'python2-pycurl' 'openldap' 'impacket'
+         'mysql-python' 'python2-psycopg2' 'python2-crypto' 'python2-pydns'
+         'python2-pysnmp' 'python2-ipy' 'java-environment' 'unzip')
+makedepends=('git')
+source=('git+https://github.com/lanjelot/patator.git')
+sha1sums=('SKIP')
+
+pkgver() {
+  cd "$srcdir/patator"
+
+  echo $(git rev-list --count HEAD).$(git rev-parse --short HEAD)
+}
+
+package() {
+  cd "$srcdir/patator"
+
+  install -Dm755 patator.py "$pkgdir/usr/bin/patator"
+  install -Dm644 README.md "$pkgdir/usr/share/doc/patator/README.md"
+}

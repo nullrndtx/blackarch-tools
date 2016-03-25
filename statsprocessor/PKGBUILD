@@ -1,0 +1,29 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='statsprocessor'
+pkgver='0.11'
+pkgrel=2
+epoch=5
+groups=('blackarch' 'blackarch-automation')
+pkgdesc='A high-performance word-generator based on per-position Markov-attack.'
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+url='http://hashcat.net/wiki/doku.php?id=statsprocessor'
+license=('custom:unknown')
+makedepends=('p7zip')
+source=("https://github.com/jsteube/statsprocessor/releases/download/v${pkgver}/statsprocessor-${pkgver}.7z")
+sha1sums=('32181f3446f1a05eb877896f6959715a02d566f2')
+
+package() {
+  cd "$srcdir/statsprocessor-$pkgver"
+
+  mkdir -p "$pkgdir/usr/share/statsprocessor"
+
+  case "$CARCH" in
+    i686) binary=sp32.bin ;;
+    x86_64) binary=sp64.bin ;;
+  esac
+
+  install -Dm644 hashcat.hcstat "$pkgdir/usr/share/statsprocessor/hashcat.hcstat"
+  install -Dm755 $binary "$pkgdir/usr/bin/statsprocessor"
+}

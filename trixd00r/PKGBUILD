@@ -1,0 +1,50 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='trixd00r'
+pkgver='0.0.1'
+pkgrel=5
+groups=('blackarch' 'blackarch-backdoor')
+pkgdesc='An advanced and invisible userland backdoor based on TCP/IP for UNIX systems.'
+url='http://nullsecurity.net/tools/backdoor.html'
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+license=('custom')
+depends=('libpcap')
+source=("https://github.com/nullsecuritynet/tools/raw/master/backdoor/trixd00r/release/trixd00r-${pkgver}.tar.gz")
+sha1sums=('b68c626b8758bff319e81ad4cf7c703e627b03d2')
+
+prepare() {
+  cd "$srcdir/trixd00r-$pkgver"
+
+  sed -i 's/LDFLGAS_IRIX/LDFLAGS_IRIX/' Makefile
+}
+
+build() {
+  cd "$srcdir/trixd00r-$pkgver"
+
+  # We can't build the solaris client.
+  # The client should be built for Linux so the 'linux' system must be last in the list.
+  for sys in freebsd netbsd openbsd macos aix hpux irix linux ; do
+    msg2 "building $sys client..."
+    rm -rf $sys
+    make MAKE=make $sys
+    mkdir $sys
+    mv trixd00rd trixd00rd-$sys
+  done
+}
+
+package() {
+  cd "$srcdir/trixd00r-$pkgver"
+
+  # Base directories.
+  mkdir -p "$pkgdir/usr/bin"
+  mkdir -p "$pkgdir/usr/share/trixd00r"
+  mkdir -p "$pkgdir/usr/share/doc/trixd00r"
+
+  # Bin.
+  install -m755 trixd00rd-* "$pkgdir/usr/share/trixd00r"
+  install -m755 trixd00r "$pkgdir/usr/bin"
+
+  # Docs.
+  install -m644 docs/* "$pkgdir/usr/share/doc/trixd00r"
+}

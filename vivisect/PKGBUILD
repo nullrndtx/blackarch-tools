@@ -1,0 +1,49 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='vivisect'
+pkgver=456.6e6287a
+pkgrel=1
+epoch=1
+groups=('blackarch' 'blackarch-debugger' 'blackarch-disassembler'
+        'blackarch-reversing')
+pkgdesc='A Python based static analysis and reverse engineering framework, Vdb is a Python based research/reversing focused debugger and programatic debugging API by invisigoth of kenshoto'
+arch=('any')
+url='http://visi.kenshoto.com/'
+license=('BSD')
+depends=('python2' 'python2-pyqt4' 'pyqt4-common' 'python2-msgpack')
+makedepends=('git')
+source=('git+https://github.com/vivisect/vivisect.git')
+options=('!emptydirs')
+sha1sums=('SKIP')
+
+pkgver() {
+  cd "$srcdir/vivisect"
+
+  echo $(git rev-list --count HEAD).$(git rev-parse --short HEAD)
+}
+
+package() {
+  cd "$srcdir/vivisect"
+
+  mkdir -p "$pkgdir/usr/bin"
+  mkdir -p "$pkgdir/usr/share/vivisect"
+
+  cp -a * "$pkgdir/usr/share/vivisect"
+
+  cat > "$pkgdir/usr/bin/vdbbin" << EOF
+#!/bin/sh
+cd /usr/share/vivisect
+exec python2 /usr/share/vivisect/vdbbin "\$@"
+EOF
+
+  chmod +x "$pkgdir/usr/bin/vdbbin"
+
+  cat > "$pkgdir/usr/bin/vivbin" << EOF
+#!/bin/sh
+cd /usr/share/vivisect
+exec python2 /usr/share/vivisect/vivbin "\$@"
+EOF
+
+  chmod +x "$pkgdir/usr/bin/vivbin"
+}

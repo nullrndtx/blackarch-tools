@@ -1,0 +1,34 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='xspy'
+pkgver='1.0c'
+pkgrel=6
+groups=('blackarch' 'blackarch-keylogger')
+pkgdesc='A utility for monitoring keypresses on remote X servers.'
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+url='http://www.freshports.org/security/xspy/'
+license=('GPL')
+depends=('libx11')
+makedepends=('imake')
+source=("ftp://ftp.fi.freebsd.org/pub/FreeBSD/ports/distfiles/xspy-${pkgver}.tar.gz")
+sha1sums=('44c9f9201ff6b07644eeda2f90688afa900cbdb6')
+
+prepare() {
+  cd "$srcdir/xspy"
+
+  sed -i '1i\#include <stdlib.h>' xspy.c usleep.c
+}
+
+build() {
+  cd "$srcdir/xspy"
+
+  gcc -lX11 -s support.c usleep.c xspy.c -o xspy
+}
+
+package() {
+  cd "$srcdir/xspy"
+
+  install -Dm755 xspy "$pkgdir/usr/bin/xspy"
+  install -Dm755 README "$pkgdir/usr/share/doc/xspy/README"
+}

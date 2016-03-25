@@ -1,0 +1,28 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='sploitctl'
+pkgver=47.e6f9e15
+pkgrel=1
+groups=('blackarch' 'blackarch-automation' 'blackarch-exploitation')
+pkgdesc='Fetch, install and search exploit archives from exploit sites like exploit-db and packetstorm.'
+arch=('any')
+url='https://github.com/BlackArch/sploitctl'
+license=('custom:unknown')
+depends=('bash' 'curl' 'git')
+makedepends=('git')
+source=('git+https://github.com/BlackArch/sploitctl.git')
+sha1sums=('SKIP')
+
+pkgver() {
+  cd "$srcdir/sploitctl"
+
+  echo $(git rev-list --count HEAD).$(git rev-parse --short HEAD)
+}
+
+package() {
+  cd "$srcdir/sploitctl"
+
+  install -Dm755 sploitctl.sh "$pkgdir/usr/bin/sploitctl"
+  install -Dm644 web/url.lst "$pkgdir/usr/share/sploitctl/web/url.lst"
+}

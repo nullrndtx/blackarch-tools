@@ -1,0 +1,25 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='xsser'
+pkgver='1.7'
+pkgrel=1
+epoch=2
+groups=('blackarch' 'blackarch-webapp' 'blackarch-fuzzer'
+        'blackarch-exploitation')
+pkgdesc='A penetration testing tool for detecting and exploiting XSS vulnerabilites.'
+arch=('any')
+url='http://xsser.sourceforge.net/'
+license=('GPL3')
+depends=('orbited' 'python2' 'python2-beautifulsoup3' 'python2-pycurl' 'twisted'
+         'pygtk')
+makedepends=('subversion' 'python2-setuptools')
+optdepends=('pygtkmoz')
+source=("http://xsser.03c8.net/xsser/xsser_${pkgver}-1.tar.gz")
+sha1sums=('e6775cb1b34aa3a351bf824961669c2ba738387d')
+
+package() {
+  cd "$srcdir/xsser_${pkgver}-1/xsser-public"
+
+  python2 setup.py install --prefix=/usr --root="$pkgdir"
+}

@@ -1,0 +1,46 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='libdnet-ipv6'
+pkgver='1.12'
+pkgrel=3
+pkgdesc="A simplified, portable interface to several low-level networking routines"
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+makedepends=('python2')
+optdepends=('python2')
+provides=('libdnet')
+conflicts=('libdnet')
+license=('BSD')
+url="http://code.google.com/p/libdnet/"
+source=("https://github.com/dugsong/libdnet/archive/libdnet-${pkgver}.tar.gz"
+        'ipv6.patch')
+sha1sums=('71302be302e84fc19b559e811951b5d600d976f8'
+          '90837b6b9f6b491ef8c5dae2a7d77209147c174c')
+
+prepare() {
+  cd "$srcdir/libdnet-$pkgver"
+
+  patch -p1 -i "$srcdir/ipv6.patch"
+}
+
+build() {
+  cd "$srcdir/libdnet-$pkgver"
+
+  autoreconf -I config --force --install
+
+  ./configure --prefix=/usr --sbindir=/usr/bin
+
+  make
+}
+
+package() {
+  cd "$srcdir/libdnet-$pkgver"
+
+  make DESTDIR="$pkgdir/" install
+
+  cd python
+
+  python2 setup.py install --root=$pkgdir
+
+  install -Dm644 ../LICENSE "$pkgdir/usr/share/licenses/libdnet/LICENSE"
+}

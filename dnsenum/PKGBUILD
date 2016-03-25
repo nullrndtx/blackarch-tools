@@ -1,0 +1,25 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='dnsenum'
+pkgver='1.2.4.2'
+pkgrel=1
+groups=('blackarch' 'blackarch-recon' 'blackarch-scanner')
+pkgdesc='Script that enumerates DNS information from a domain, attempts zone transfers, performs a brute force dictionary style attack, and then performs reverse look-ups on the results.'
+arch=('any')
+url='http://www2.packetstormsecurity.org/cgi-bin/search/search.cgi?searchvalue=dnsenum'
+license=('GPL')
+depends=('perl' 'perl-net-dns' 'perl-net-ip' 'perl-net-netmask'
+         'perl-www-mechanize' 'perl-net-whois-ip' 'perl-xml-writer'
+         'perl-string-random')
+source=("https://github.com/fwaeytens/dnsenum/archive/${pkgver}.zip")
+sha1sums=('a4c18618301a6a85c702336707a42a6d2db6eda0')
+
+package() {
+  cd "$srcdir/dnsenum-$pkgver"
+
+  install -Dm755 dnsenum.pl "$pkgdir/usr/bin/dnsenum"
+  install -Dm644 dns.txt "$pkgdir/usr/share/dnsenum/dns.txt"
+  install -Dm644 README.md "$pkgdir/usr/share/doc/dnsenum/README.md"
+  install -m644 INSTALL.txt "$pkgdir/usr/share/doc/dnsenum/INSTALL.txt"
+}

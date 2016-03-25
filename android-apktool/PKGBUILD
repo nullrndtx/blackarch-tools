@@ -1,0 +1,30 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='android-apktool'
+pkgver='2.0.2'
+pkgrel=1
+pkgdesc='A tool for reengineering Android apk files.'
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+groups=('blackarch' 'blackarch-reversing' 'blackarch-disassembler')
+url='http://forum.xda-developers.com/showthread.php?t=1755243'
+license=('Apache')
+depends=('java-environment' 'android-sdk-build-tools')
+source=("https://bitbucket.org/iBotPeaches/apktool/downloads/apktool_${pkgver}.jar"
+        'https://raw.githubusercontent.com/iBotPeaches/Apktool/master/scripts/linux/apktool')
+sha1sums=('440b87deea9d5f403e5496c5427ff38ca1b3a224'
+          '9993748adf3e27261c154a3416eb528ddc4a7b51')
+
+prepare() {
+  cd "$srcdir"
+
+  sed -i 's|libdir=.*progdir|libdir="/usr/share/android-apktool|' apktool
+}
+
+package() {
+  cd "$srcdir"
+
+  install -Dm755 apktool "$pkgdir/usr/bin/apktool"
+  install -Dm644 apktool_2.0.2.jar \
+    "$pkgdir/usr/share/android-apktool/apktool.jar"
+}

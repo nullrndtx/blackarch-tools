@@ -1,0 +1,23 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='rfidtool'
+pkgver='0.01'
+pkgrel=5
+groups=('blackarch' 'blackarch-wireless')
+pkgdesc="A opensource tool to read / write rfid tags"
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+license=('GPL')
+url='http://www.bindshell.net/tools/rfidtool.html'
+source=("http://www.bindshell.net/tools/rfidtool/rfidtool-v${pkgver}.tar.bz2")
+sha1sums=('c60185355c6f42972aff86662c4be55a91b97dd6')
+
+build() {
+  cd $srcdir/rfidtool-v$pkgver
+  make
+}
+
+package() {
+  cd $srcdir/rfidtool-v$pkgver
+  install -Dm755 rfidtool $pkgdir/usr/bin/rfidtool
+}

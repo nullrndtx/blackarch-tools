@@ -1,0 +1,37 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='sysinternals-suite'
+pkgver='1.7'
+pkgrel=1
+epoch=1
+groups=('blackarch' 'blackarch-windows')
+pkgdesc='Sysinternals tools suite.'
+url='http://sysinternals.com/'
+license=('sysinternals')
+arch=('any')
+source=('http://download.sysinternals.com/files/SysinternalsSuite.zip')
+sha1sums=('28b597cc3629d2e73f8c006c040fe432eb62cd76')
+
+package() {
+  cd "$srcdir"
+
+  mkdir -p "$pkgdir/usr/share/windows/sysinternals-suite"
+
+  find . -type l -exec rm {} \;
+
+  # Transform all files to lowercase
+  for f in *
+  do
+    lc=$(echo $f | tr '[A-Z]' '[a-z]')
+
+    if [ ! -f $f -o -f $lc ]; then
+      continue
+    fi
+
+    mv -i $f $lc
+  done
+
+  install -m755 *.exe *.sys "$pkgdir/usr/share/windows/sysinternals-suite"
+  install -m644 *.chm *.hlp *.txt "$pkgdir/usr/share/windows/sysinternals-suite"
+}

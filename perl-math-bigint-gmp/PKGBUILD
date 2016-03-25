@@ -1,0 +1,32 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='perl-math-bigint-gmp'
+pkgver='1.45'
+pkgrel=1
+pkgdesc='Big integer calculations using the GNU Multiple Precision Arithmetic Library.'
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+url="http://search.cpan.org/~pjacklam/Math-BigInt-GMP-${pkgver}/"
+license=('GPL' 'PerlArtistic')
+depends=('perl' 'gmp')
+options=(!emptydirs)
+source=("http://search.cpan.org/CPAN/authors/id/P/PJ/PJACKLAM/Math-BigInt-GMP-${pkgver}.tar.gz")
+sha1sums=('b682ee76a48825682d2ed114815f4e357d135a47')
+
+build() {
+  cd "$srcdir/Math-BigInt-GMP-$pkgver"
+
+  # Install module in vendor directories.
+  PERL_MM_USE_DEFAULT=1 perl Makefile.PL INSTALLDIRS=vendor
+
+  make
+}
+
+package() {
+  cd "$srcdir/Math-BigInt-GMP-$pkgver"
+
+  make install DESTDIR="$pkgdir/"
+
+  find ${pkgdir} -name '.packlist' -delete
+  find ${pkgdir} -name '*.pod' -delete
+}

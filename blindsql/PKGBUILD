@@ -1,0 +1,28 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='blindsql'
+pkgver='1.0'
+pkgrel=2
+pkgdesc='Set of bash scripts for blind SQL injection attacks.'
+groups=('blackarch' 'blackarch-database')
+arch=('any')
+url='http://www.enye-sec.org/programas.html'
+license=('GPL')
+depends=('bash')
+source=("http://www.enye-sec.org/programas/blindsql.v${pkgver}.tar.gz")
+sha1sums=('a832e5b570c38a7bd909fb55adfdf059fba096d4')
+
+package() {
+  cd "$srcdir/blindsql.v$pkgver"
+
+  mkdir -p "$pkgdir/usr/bin"
+  mkdir -p "$pkgdir/usr/share/blindsql"
+
+  install -m644 readme.txt "$pkgdir/usr/share/blindsql/readme.txt"
+  install -m755 sqldata.sh "$pkgdir/usr/share/blindsql/sqldata.sh"
+  install -m755 sqlcheck.sh "$pkgdir/usr/share/blindsql/sqlcheck.sh"
+
+  ln -s "/usr/share/blindsql/sqldata.sh" "$pkgdir/usr/bin/sqldata"
+  ln -s "/usr/share/blindsql/sqlcheck.sh" "$pkgdir/usr/bin/sqlcheck"
+}

@@ -1,0 +1,49 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='rfidiot'
+pkgver=71.ed1732f
+pkgrel=1
+groups=('blackarch' 'blackarch-wireless')
+pkgdesc='An open source python library for exploring RFID devices.'
+url='http://rfidiot.org/'
+license=('GPL')
+makedepends=('git' 'python2-distribute' 'python2-crypto')
+depends=('python2' 'openssl')
+arch=('any')
+source=('git+https://github.com/AdamLaurie/RFIDIOt')
+sha1sums=('SKIP')
+
+pkgver() {
+  cd "$srcdir/RFIDIOt"
+
+  echo $(git rev-list --count HEAD).$(git rev-parse --short HEAD)
+}
+
+prepare() {
+  cd "$srcdir/RFIDIOt"
+
+  # Change shebang lines.
+  find . -type f -name '*.py' -exec sed -i '1s/python\r\?$/python2/' '{}' \;
+}
+
+package() {
+  cd "$srcdir/RFIDIOt"
+
+  python2 setup.py install --root="$pkgdir/" --optimize=1
+
+  cd "$pkgdir/usr/bin"
+
+  # Remove test scripts.
+  rm -f *.sh
+
+  # Strip extensions and add the 'rfidiot-' prefix.
+  for file in *.py ; do
+    # Remove extension. Add prefix.
+    new_file=rfidiot-$(basename "${file%.*}")
+    # '_' -> '-'
+    new_file=${new_file/_/-}
+    install -Dm755 "$file" "$new_file"
+    rm -f "$file"
+  done
+}

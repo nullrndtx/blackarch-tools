@@ -1,0 +1,24 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='dmitry'
+pkgver='1.3a'
+pkgrel=4
+groups=('blackarch' 'blackarch-scanner')
+pkgdesc="Deepmagic Information Gathering Tool. Gathers information about hosts. It is able to gather possible subdomains, email addresses, and uptime information and run tcp port scans, whois lookups, and more."
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+url='http://www.mor-pah.net/'
+license=('GPL')
+source=("http://dl.packetstormsecurity.net/UNIX/misc/DMitry-$pkgver.tar.gz")
+sha1sums=('ed242375b5629270593795e6de45c61d3953bdda')
+
+build() {
+  cd $srcdir/DMitry-$pkgver
+  ./configure --prefix=/usr --sysconfdir=/etc
+  make
+}
+
+package() {
+  cd $srcdir/DMitry-$pkgver
+  make DESTDIR=$pkgdir install
+}

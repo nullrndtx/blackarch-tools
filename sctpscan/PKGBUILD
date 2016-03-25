@@ -1,0 +1,42 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='sctpscan'
+pkgver=34.4d44706
+pkgrel=3
+groups=('blackarch' 'blackarch-recon' 'blackarch-scanner')
+pkgdesc='A network scanner for discovery and security.'
+url="http://www.p1sec.com/"
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+depends=('glib2')
+makedepends=('git')
+license=('GPL3')
+source=('git+https://github.com/philpraxis/sctpscan.git' 'sctpscan.patch')
+sha1sums=('SKIP'
+          'c2d9a1ab4ce2aa76b256658f0c0a57aa886e2318')
+
+pkgver() {
+  cd "$srcdir/sctpscan"
+
+  echo $(git rev-list --count HEAD).$(git rev-parse --short HEAD)
+}
+
+prepare() {
+  cd "$srcdir"
+
+  patch -p1 < sctpscan.patch
+}
+
+build() {
+  cd "$srcdir/sctpscan"
+
+  make
+}
+
+package() {
+  cd "$srcdir/sctpscan"
+
+  install -Dm755 sctpscan "$pkgdir/usr/bin/sctpscan"
+  install -Dm644 README "$pkgdir/usr/share/doc/sctpscan/README"
+  install -Dm644 -t "$pkgdir/usr/share/licenses/sctpscan/" LICENSE COPYING
+}

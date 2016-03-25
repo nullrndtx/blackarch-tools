@@ -1,0 +1,52 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='rawr'
+pkgver=71.f9a4f40
+pkgrel=1
+groups=('blackarch' 'blackarch-scanner' 'blackarch-webapp')
+pkgdesc='Rapid Assessment of Web Resources. A web enumerator.'
+arch=('any')
+url='https://bitbucket.org/al14s/rawr/wiki/Home'
+license=('GPL3')
+makedepends=('git')
+depends=('nmap' 'python2' 'graphviz' 'python2-pygraphviz' 'python2-lxml'
+         'phantomjs' 'python2-pillow' 'python2-imaging')
+source=('git+https://bitbucket.org/al14s/rawr.git')
+sha1sums=('SKIP')
+
+pkgver() {
+  cd "$srcdir/rawr"
+
+  echo $(git rev-list --count HEAD).$(git rev-parse --short HEAD)
+}
+
+prepare() {
+  cd "$srcdir/rawr"
+
+  sed -i '1s/env python/env python2/' rawr.py
+
+  #sed -i 's|import Image|from PIL import Image|' lib/functions.py
+}
+
+package() {
+  cd "$srcdir/rawr"
+
+  mkdir -p "$pkgdir/usr/bin"
+  mkdir -p "$pkgdir/usr/share/rawr"
+
+  install -Dm644 docs/LICENSE "$pkgdir/usr/share/licenses/rawr/LICENSE"
+  rm docs/LICENSE
+  install -Dm644 -t "$pkgdir/usr/share/doc/rawr" README.md docs/*
+
+  rm -rf docs/
+
+  cp -a * "$pkgdir/usr/share/rawr"
+
+  cat > "$pkgdir/usr/bin/rawr" << EOF
+#!/bin/sh
+exec python2 /usr/share/rawr/rawr.py
+EOF
+
+  chmod +x "$pkgdir/usr/bin/rawr"
+}

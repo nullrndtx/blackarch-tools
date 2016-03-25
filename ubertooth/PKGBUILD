@@ -1,0 +1,45 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='ubertooth'
+pkgver='2015.10.R1'
+pkgrel=1
+groups=('blackarch' 'blackarch-bluetooth')
+pkgdesc='A 2.4 GHz wireless development board suitable for Bluetooth experimentation. Open source hardware and software. Tools only.'
+url='https://github.com/greatscottgadgets/ubertooth/releases'
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+license=('GPL')
+depends=('libusbx' 'libbtbb' 'bluez-libs' 'libpcap' 'python2' 'python2-numpy'
+         'python2-pyside' 'python2-pyqt4' 'python2-pyusb')
+makedepends=('cmake')
+source=("https://github.com/greatscottgadgets/ubertooth/archive/${pkgver//./-}.tar.gz")
+sha1sums=('815e12fa3c9b9292e230bff00bf0e0b6539cbb1d')
+
+prepare() {
+  cd "$srcdir/ubertooth-${pkgver//./-}/host"
+
+  find "$srcdir/" -name "*.py" -exec sed -i 's|env python|env python2|' {} \;
+  find "$srcdir/" -name "*.py" -exec \
+    sed -i 's|/usr/bin/python|/usr/bin/python2|' {} \;
+}
+
+build() {
+  cd "$srcdir/ubertooth-${pkgver//./-}/host"
+
+  mkdir build
+
+  cd build
+
+  cmake -DPYTHON_EXECUTABLE:FILEPATH=/usr/bin/python2.7 \
+    -DCMAKE_INSTALL_PREFIX:PATH=/usr ..
+
+  make
+}
+
+package() {
+  cd "$srcdir/ubertooth-${pkgver//./-}/host"
+
+  cd build
+
+  make DESTDIR="$pkgdir" install
+}

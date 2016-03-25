@@ -1,0 +1,47 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='netreconn'
+pkgver='1.78'
+pkgrel=1
+groups=('blackarch' 'blackarch-networking' 'blackarch-recon' 'blackarch-scanner')
+pkgdesc='A collection of network scan/recon tools that are relatively small compared to their larger cousins.'
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+url='http://packetstormsecurity.com/files/86076/NetReconn-Scanning-Tool-Collection-1.76.html'
+license=('GPL2')
+depends=('perl' 'glibc' 'libpcap')
+source=("https://dl.packetstormsecurity.net/UNIX/utilities/netrecon-${pkgver}.tgz")
+sha1sums=('cc947e0a4df1cb34ccf232363708150d89689cd4')
+
+prepare() {
+  cd "$srcdir/netrecon-$pkgver"
+
+  sed -i 's|/usr/local/share/man/man1|/usr/share/man/man1|' Makefile
+  sed -i 's|/usr/local/bin|/usr/bin|' Makefile
+  #sed -i 's|/usr/local/bin|/usr/bin|' ntrace.pl
+  #sed -i 's|/var/tmp|/tmp|' ntrace.pl
+  #sed -i 's|/usr/local/bin|/usr/bin|' nlist.sh
+}
+
+build() {
+  cd "$srcdir/netrecon-$pkgver"
+
+  make linux
+}
+
+package() {
+  cd "$srcdir/netrecon-$pkgver"
+
+  mkdir -p "$pkgdir/usr/bin"
+  mkdir -p "$pkgdir/usr/share/man/man1/"
+
+  install -Dm755 netrecon "$pkgdir/usr/bin/netreconn"
+
+  for i in *.1
+  do
+    install -m644 $i "$pkgdir/usr/share/man/man1/$i"
+  done
+
+  install -Dm644 -t "$pkgdir/usr/share/doc/netreconn/" README ChangeLog TODO
+  install -Dm644 COPYING "$pkgdir/usr/share/licenses/netreconn/COPYING"
+}

@@ -1,0 +1,37 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='sqid'
+pkgver='0.3'
+pkgrel=3
+pkgdesc='A SQL injection digger.'
+arch=('any')
+url='http://sqid.rubyforge.org/'
+license=('GPL')
+depends=('ruby')
+groups=('blackarch' 'blackarch-webapp')
+source=("http://packetstorm.sigterm.no/UNIX/scanners/sqid-${pkgver}.tar.gz")
+sha1sums=('efc86e946c99e52262e2d3f75c430c7e42162e0e')
+
+prepare() {
+  cd "$srcdir/sqid-$pkgver"
+
+  sed -i -e 's|sqid.db|/usr/share/sqid/sqid.db|g' "sqid.rb"
+}
+
+package() {
+  cd "$srcdir/sqid-$pkgver"
+
+  mkdir -p "$pkgdir/usr/share/sqid"
+
+  install -Dm755 sqid.rb "$pkgdir/usr/share/sqid"
+  install -m644 "readme" "sqid.db" "$pkgdir/usr/share/sqid"
+
+  cat > "$pkgdir/usr/bin/sqid" << EOF
+#!/bin/sh
+cd /usr/share/sqid/
+exec ruby sqid.rb "\$@"
+EOF
+
+  chmod a+x "$pkgdir/usr/bin/sqid"
+}

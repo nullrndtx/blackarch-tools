@@ -1,0 +1,56 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='paketto'
+pkgver='1.10'
+pkgrel=4
+groups=('blackarch' 'blackarch-scanner')
+pkgdesc='Advanced TCP/IP Toolkit.'
+url='http://www.doxpara.com/paketto'
+license=('GPL')
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+depends=('glibc')
+source=("http://ftp.oregonstate.edu/pub/gentoo/distfiles/paketto-${pkgver}.tar.gz"
+        'paketto.patch'
+        'libnet.h.patch'
+        'configure.patch'
+        'gcc4-tomcrypt.diff')
+sha1sums=('f4d880c0aeee442beecddf0ac31651c60ff2befa'
+          '7d42d76540bbf9b0c58d037af4b03377873c970e'
+          '8dcb923589ab915b6b31dcca06813e0c4619751a'
+          '49d6caf468a288b0e79ea879d0c81569384e54e5'
+          '6cd4f1c93241454cf32545aef050088c5aa2aefd')
+
+prepare() {
+  cd "$srcdir/paketto-$pkgver"
+
+  patch -p1 < "$srcdir/paketto.patch"
+  patch -p1 < "$srcdir/configure.patch"
+}
+
+build() {
+  cd "$srcdir/paketto-$pkgver"
+
+  rm -rf libtomcrypt
+  ./configure --prefix=/usr --mandir=/usr/share/man --sbindir=/usr/bin
+
+  cd libtomcrypt/
+
+  patch -p0 < "$srcdir/gcc4-tomcrypt.diff"
+  make
+
+  cd ..
+  patch -p1 < "$srcdir/libnet.h.patch"
+
+  make
+}
+
+package() {
+  cd "$srcdir/paketto-$pkgver"
+
+  make "DESTDIR=$pkgdir" install
+
+  # Fix conflicts with extra/mono.
+  mv "$pkgdir/usr/bin/lc" "$pkgdir/usr/bin/paketto-lc"
+  mv "$pkgdir/usr/share/man/man1/lc.1" "$pkgdir/usr/share/man/man1/paketto-lc.1"
+}

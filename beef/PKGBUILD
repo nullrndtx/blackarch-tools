@@ -1,0 +1,41 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='beef'
+pkgver=0.4.7.0.74.g815eff8
+pkgrel=1
+groups=('blackarch' 'blackarch-exploitation')
+pkgdesc='The Browser Exploitation Framework that focuses on the web browser'
+arch=('any')
+url='http://beefproject.com/'
+install='beef.install'
+license=('Apache')
+makedepends=('git')
+depends=('ruby' 'ruby-bundler' 'sqlite' 'python2')
+source=('git+http://github.com/beefproject/beef.git')
+sha1sums=('SKIP')
+
+pkgver() {
+  cd "$srcdir/beef"
+
+  git describe | sed 's/^v//;s/-/./g;s/_/./g;s/^beef.//'
+}
+
+package() {
+  cd "$srcdir/beef"
+
+  mkdir -p "$pkgdir/usr/bin"
+
+  # The .git/ overhead is tiny and this allows users to update with git.
+  git clone "$srcdir/beef" "$pkgdir/usr/share/beef"
+
+  rm "$pkgdir/usr/share/beef/install"
+
+  cat > "$pkgdir/usr/bin/beef" << EOF
+#!/bin/sh
+cd /usr/share/beef
+exec ruby beef "\$@"
+EOF
+
+  chmod +x "$pkgdir/usr/bin/beef"
+}

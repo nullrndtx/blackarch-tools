@@ -1,0 +1,51 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='netdiscover'
+pkgver='0.3'
+pkgrel=7
+groups=('blackarch' 'blackarch-recon' 'blackarch-wireless')
+pkgdesc='An active/passive address reconnaissance tool, mainly developed for those wireless networks without dhcp server, when you are wardriving. It can be also used on hub/switched networks.'
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+url='http://nixgeneration.com/~jaime/netdiscover/'
+license=('GPL')
+depends=('libnet' 'libpcap')
+makedepends=('gcc' 'make')
+provides=('netdiscover')
+conflicts=('netdiscover')
+source=("http://nixgeneration.com/~jaime/netdiscover/releases/netdiscover-$pkgver-beta6.tar.gz"
+        'misc.diff'
+        'oui.diff')
+sha1sums=('b6dfb89a0cbd14e398ae01f358bc56719c994856'
+          '5210dba579b6e650a59102beded408ba5a471327'
+          '27d1b85d68a26c06727b157abe15a4bf503d4d38')
+
+prepare() {
+  cd "$srcdir/netdiscover-$pkgver-beta6"
+
+  patch -p0 -i $srcdir/oui.diff
+  patch -p0 -i $srcdir/misc.diff
+}
+
+build() {
+  cd "$srcdir/netdiscover-$pkgver-beta6"
+
+  ./configure --prefix=/usr --sysconfdir=/etc --sbindir=/usr/bin
+
+  make
+}
+
+package() {
+  cd "$srcdir/netdiscover-$pkgver-beta6"
+
+  mkdir -p "$pkgdir/usr/share/doc/netdiscover"
+
+  make DESTDIR="$pkgdir" install
+
+  install -Dm644 "$pkgdir/usr/doc/netdiscover/COPYING" \
+    "$pkgdir/usr/share/licenses/netdiscover"
+
+  mv "$pkgdir/usr/doc/netdiscover/" "$pkgdir/usr/share/doc/netdiscover"
+
+  rm -rf "$pkgdir/usr/doc"
+}

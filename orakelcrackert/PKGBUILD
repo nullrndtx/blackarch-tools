@@ -1,0 +1,23 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='orakelcrackert'
+pkgver='1.00'
+pkgrel=3
+pkgdesc="This tool can crack passwords which are encrypted using Oracle's latest SHA1 based password protection algorithm."
+url='http://freeworld.thc.org/thc-orakelcrackert11g/'
+groups=('blackarch' 'blackarch-windows' 'blackarch-cracker')
+license=('custom')
+arch=('any')
+source=("http://freeworld.thc.org/thc-orakelcrackert11g/thc-orakelcrackert11g.tar.gz")
+sha1sums=('2c3b9f60e017e2e65bca71bc46b1b0984d340e8e')
+
+package() {
+  cd "$srcdir"
+
+  mkdir -p "$pkgdir/usr/share/orakelcrackert"
+
+  rm thc-orakelcrackert11g.tar.gz
+
+  cp -a * "$pkgdir/usr/share/orakelcrackert"
+}

@@ -1,0 +1,34 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='rtp-flood'
+pkgver='1.0'
+pkgrel=3
+pkgdesc="RTP flooder"
+url='http://www.hackingexposedvoip.com/'
+license=('GPL2')
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+groups=('blackarch' 'blackarch-voip')
+source=("http://www.hackingexposedvoip.com/tools/rtpflood.tar.gz")
+sha1sums=('b3b0a4d32e68d1ed24d15275cec05d625c03d662')
+
+prepare() {
+  cd "$srcdir/rtpflood"
+
+  sed -i "s:gcc :gcc $CFLAGS :" Makefile
+}
+
+build() {
+  cd "$srcdir/rtpflood"
+
+  make
+}
+
+package() {
+  cd "$srcdir/rtpflood"
+
+  install -D -m755 "rtpflood" "$pkgdir/usr/bin/rtpflood"
+  install -D -m644 "LICENSE_SOFTWARE" \
+    "$pkgdir/usr/share/doc/rtpflood/LICENSE_SOFTWARE"
+}
+
